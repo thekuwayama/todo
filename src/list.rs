@@ -16,12 +16,11 @@ pub fn list<R: BufRead>(reader: &mut R) -> Result<String, Error> {
         let caps = re
             .captures(l.as_str())
             .ok_or(Error::new(ErrorKind::InvalidInput, "format error"))?;
-        let tuple = (
+        match (
             caps.get(1).map_or("", |m| m.as_str()),
             caps.get(2).map_or("", |m| m.as_str()),
             caps.get(3).map_or("", |m| m.as_str()),
-        );
-        match tuple {
+        ) {
             ("[x]", s, "") => w.push_str(format!("{} {:03}: {}\n", DONE, index, s).as_str()),
             ("[x]", s, t) => w.push_str(format!("{} {:03}: {} ({})\n", DONE, index, s, t).as_str()),
             ("[ ]", s, "") => w.push_str(format!("{} {:03}: {}\n", TODO, index, s).as_str()),

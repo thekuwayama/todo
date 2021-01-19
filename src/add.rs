@@ -3,6 +3,7 @@ use std::io::{Error, Write};
 pub fn add<W: Write>(writer: &mut W, s: &str) -> Result<(), Error> {
     writer.write(format!("[ ] {} ()\n", s).as_bytes())?;
     writer.flush()?;
+
     Ok(())
 }
 
