@@ -1,7 +1,7 @@
 extern crate regex;
 
 use regex::Regex;
-use std::io::{BufRead, Error};
+use std::io::{BufRead, Error, ErrorKind};
 
 const TODO: &str = "\u{2610}";
 const DONE: &str = "\u{2611}";
@@ -13,7 +13,9 @@ pub fn list<R: BufRead>(reader: &mut R) -> Result<String, Error> {
     let mut index = 1;
     for line in reader.lines() {
         let l = line?;
-        let caps = re.captures(l.as_str()).unwrap();
+        let caps = re
+            .captures(l.as_str())
+            .ok_or(Error::new(ErrorKind::InvalidInput, "format error"))?;
         let tuple = (
             caps.get(1).map_or("", |m| m.as_str()),
             caps.get(2).map_or("", |m| m.as_str()),
