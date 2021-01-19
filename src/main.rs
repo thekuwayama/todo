@@ -9,6 +9,8 @@ use std::env;
 use std::fs::{File, OpenOptions};
 use std::io::{BufReader, BufWriter};
 
+const FILE_NAME: &str = "/Users/thekuwayama/.todo"; // TODO: $HOME
+
 fn main() {
     let app = App::new(crate_name!())
         .version(crate_version!())
@@ -19,22 +21,23 @@ fn main() {
 
     match matches.subcommand() {
         ("list", _) => {
-            let f = File::open("/Users/thekuwayama/.todo").unwrap(); // TODO: home dir
+            let f = File::open(FILE_NAME).unwrap();
             let mut reader = BufReader::new(f);
-            let res = list::list(&mut reader).unwrap_or(String::from("list error"));
+            let res = list::list(&mut reader).unwrap_or(String::from("list error")); // TODO: error message
             println!("{}", res);
             ()
         }
         ("add", Some(s)) => {
             let f = OpenOptions::new()
+                .create(true)
                 .append(true)
-                .open("/Users/thekuwayama/.todo")
+                .open(FILE_NAME)
                 .unwrap();
             let mut writer = BufWriter::new(f);
             add::add(&mut writer, s.value_of("task").unwrap()).unwrap();
             ()
         }
-        ("add", None) => (),
-        _ => (), // TODO: print help
+        ("add", None) => (), // TODO: print help
+        _ => (),             // TODO: print help
     };
 }
