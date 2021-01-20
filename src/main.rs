@@ -58,64 +58,69 @@ fn main() {
     let mut reader = BufReader::new(r);
     match app.clone().get_matches().subcommand() {
         ("list", _) => {
-            let res = list::list(&mut reader).unwrap_or(String::from("failed to list"));
+            let res = list::list(&mut reader).unwrap_or_else(|e| panic!("failed to list: {}", e));
             println!("{}", res);
             ()
         }
         ("add", Some(s)) => {
-            let err_msg = "failed to add a task";
-            let result = add::add(s.value_of("task").unwrap()).expect(err_msg);
+            let result = add::add(s.value_of("task").unwrap())
+                .unwrap_or_else(|e| panic!("failed to add a task: {}", e));
             let mut writer = OpenOptions::new()
                 .create(true)
                 .append(true)
                 .open(path.clone())
                 .expect(format!("failed to file open {}", path).as_str());
-            writer.write_all(result.as_bytes()).expect(err_msg);
+            writer
+                .write_all(result.as_bytes())
+                .unwrap_or_else(|e| panic!("failed to add a task: {}", e));
             ()
         }
         ("delete", Some(i)) => {
-            let err_msg = "failed to delete a task";
             let result = delete::delete(
                 &mut reader,
                 i.value_of("index").unwrap().parse::<u32>().unwrap(),
             )
-            .expect(err_msg);
+            .unwrap_or_else(|e| panic!("failed to delete a task: {}", e));
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(path.clone())
                 .expect(format!("failed to file open {}", path).as_str());
-            writer.write_all(result.as_bytes()).expect(err_msg);
+            writer
+                .write_all(result.as_bytes())
+                .unwrap_or_else(|e| panic!("failed to delete a task: {}", e));
             writer
                 .set_len(result.as_bytes().len() as u64)
-                .expect(err_msg);
+                .unwrap_or_else(|e| panic!("failed to delete a task: {}", e));
             ()
         }
         ("done", Some(i)) => {
-            let err_msg = "failed to done a task";
             let result = done::done(
                 &mut reader,
                 i.value_of("index").unwrap().parse::<u32>().unwrap(),
             )
-            .expect(err_msg);
+            .unwrap_or_else(|e| panic!("failed to done a task: {}", e));
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(path.clone())
                 .expect(format!("failed to file open {}", path).as_str());
-            writer.write_all(result.as_bytes()).expect(err_msg);
+            writer
+                .write_all(result.as_bytes())
+                .unwrap_or_else(|e| panic!("failed to done a task: {}", e));
             ()
         }
         ("undone", Some(i)) => {
-            let err_msg = "failed to undone a task";
             let result = undone::undone(
                 &mut reader,
                 i.value_of("index").unwrap().parse::<u32>().unwrap(),
             )
-            .expect(err_msg);
+            .unwrap_or_else(|e| panic!("failed to undone a task: {}", e));
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(path.clone())
                 .expect(format!("failed to file open {}", path).as_str());
-            writer.write_all(result.as_bytes()).expect(err_msg);
+            writer
+                .write_all(result.as_bytes())
+                .unwrap_or_else(|e| panic!("failed to undone a task: {}", e));
             ()
         }
         _ => {
