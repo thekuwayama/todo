@@ -23,6 +23,10 @@ pub fn undone<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Error> {
         index += 1;
     }
 
+    if index <= i {
+        return Err(Error::new(ErrorKind::InvalidInput, "invalid index"));
+    }
+
     Ok(w)
 }
 
