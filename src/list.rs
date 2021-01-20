@@ -50,12 +50,10 @@ mod tests {
         );
         assert_eq!(
             list(&mut reader).unwrap(),
-            String::from(
-                "\u{2611} 001: first\n\
-                 \u{2611} 002: second (2)\n\
-                 \u{2610} 003: third\n\
-                 \u{2610} 004: fourth (4)\n"
-            )
+            "\u{2611} 001: first\n\
+             \u{2611} 002: second (2)\n\
+             \u{2610} 003: third\n\
+             \u{2610} 004: fourth (4)\n"
         );
     }
 }

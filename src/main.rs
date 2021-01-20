@@ -2,6 +2,7 @@
 extern crate clap;
 
 mod add;
+mod delete;
 mod done;
 mod list;
 mod undone;
@@ -16,8 +17,8 @@ const FILE_NAME: &str = ".todo_history";
 
 fn log_file_path() -> String {
     match env::var("HOME") {
-        Ok(val) => String::from(format!("{}/{}", val, FILE_NAME)),
-        Err(_) => String::from(format!("./{}", FILE_NAME)),
+        Ok(val) => format!("{}/{}", val, FILE_NAME).to_string(),
+        Err(_) => format!("./{}", FILE_NAME).to_string(),
     }
 }
 
@@ -30,6 +31,11 @@ fn main() {
             SubCommand::with_name("add")
                 .about("add the task")
                 .arg(Arg::with_name("task").required(true)),
+        )
+        .subcommand(
+            SubCommand::with_name("delete")
+                .about("delete the task")
+                .arg(Arg::with_name("index").required(true)),
         )
         .subcommand(
             SubCommand::with_name("done")
@@ -64,8 +70,24 @@ fn main() {
                 .append(true)
                 .open(path.clone())
                 .expect(format!("failed to file open {}", path).as_str());
-            writer.write(result.as_bytes()).expect(err_msg);
-            writer.flush().expect(err_msg);
+            writer.write_all(result.as_bytes()).expect(err_msg);
+            ()
+        }
+        ("delete", Some(i)) => {
+            let err_msg = "failed to delete a task";
+            let result = delete::delete(
+                &mut reader,
+                i.value_of("index").unwrap().parse::<u32>().unwrap(),
+            )
+            .expect(err_msg);
+            let mut writer = OpenOptions::new()
+                .write(true)
+                .open(path.clone())
+                .expect(format!("failed to file open {}", path).as_str());
+            writer.write_all(result.as_bytes()).expect(err_msg);
+            writer
+                .set_len(result.as_bytes().len() as u64)
+                .expect(err_msg);
             ()
         }
         ("done", Some(i)) => {
@@ -76,12 +98,10 @@ fn main() {
             )
             .expect(err_msg);
             let mut writer = OpenOptions::new()
-                .create(true)
                 .write(true)
                 .open(path.clone())
                 .expect(format!("failed to file open {}", path).as_str());
-            writer.write(result.as_bytes()).expect(err_msg);
-            writer.flush().expect(err_msg);
+            writer.write_all(result.as_bytes()).expect(err_msg);
             ()
         }
         ("undone", Some(i)) => {
@@ -92,12 +112,10 @@ fn main() {
             )
             .expect(err_msg);
             let mut writer = OpenOptions::new()
-                .create(true)
                 .write(true)
                 .open(path.clone())
                 .expect(format!("failed to file open {}", path).as_str());
-            writer.write(result.as_bytes()).expect(err_msg);
-            writer.flush().expect(err_msg);
+            writer.write_all(result.as_bytes()).expect(err_msg);
             ()
         }
         _ => {
