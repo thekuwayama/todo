@@ -1,10 +1,7 @@
-use std::io::{Error, Write};
+use std::io::Error;
 
-pub fn add<W: Write>(writer: &mut W, s: &str) -> Result<(), Error> {
-    writer.write(format!("[ ] {} ()\n", s).as_bytes())?;
-    writer.flush()?;
-
-    Ok(())
+pub fn add(s: &str) -> Result<String, Error> {
+    Ok(format!("[ ] {} ()\n", s).to_string())
 }
 
 #[cfg(test)]
@@ -13,8 +10,7 @@ mod tests {
 
     #[test]
     fn test_add() {
-        let mut writer = Vec::new();
-        assert!(add(&mut writer, "test").is_ok());
-        assert_eq!(writer, b"[ ] test ()");
+        assert!(add("test").is_ok());
+        assert_eq!(add("test").unwrap(), "[ ] test ()\n".to_string());
     }
 }
