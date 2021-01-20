@@ -4,6 +4,7 @@ extern crate clap;
 mod add;
 mod done;
 mod list;
+mod undone;
 
 use clap::{App, Arg, SubCommand};
 use std::env;
@@ -33,6 +34,11 @@ fn main() {
         .subcommand(
             SubCommand::with_name("done")
                 .about("done the task")
+                .arg(Arg::with_name("index").required(true)),
+        )
+        .subcommand(
+            SubCommand::with_name("undone")
+                .about("undone the task")
                 .arg(Arg::with_name("index").required(true)),
         );
 
@@ -68,7 +74,23 @@ fn main() {
                 &mut reader,
                 i.value_of("index").unwrap().parse::<u32>().unwrap(),
             )
-            .expect("failed to done a task");
+            .expect(err_msg);
+            let mut writer = OpenOptions::new()
+                .create(true)
+                .write(true)
+                .open(path.clone())
+                .expect(format!("failed to file open {}", path).as_str());
+            writer.write(result.as_bytes()).expect(err_msg);
+            writer.flush().expect(err_msg);
+            ()
+        }
+        ("undone", Some(i)) => {
+            let err_msg = "failed to undone a task";
+            let result = undone::undone(
+                &mut reader,
+                i.value_of("index").unwrap().parse::<u32>().unwrap(),
+            )
+            .expect(err_msg);
             let mut writer = OpenOptions::new()
                 .create(true)
                 .write(true)

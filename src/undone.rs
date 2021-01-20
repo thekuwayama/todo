@@ -1,7 +1,7 @@
 use regex::Regex;
 use std::io::{BufRead, Error, ErrorKind};
 
-pub fn done<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Error> {
+pub fn undone<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Error> {
     let re = Regex::new(r"^(\[.\]) (.+) \((\d*)\)$").unwrap();
     let mut w = String::new();
 
@@ -15,7 +15,7 @@ pub fn done<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Error> {
             let s = caps.get(2).map_or("", |m| m.as_str());
             let t = caps.get(3).map_or("", |m| m.as_str());
 
-            w.push_str(format!("[x] {} ({})\n", s, t).as_str());
+            w.push_str(format!("[ ] {} ({})\n", s, t).as_str());
         } else {
             w.push_str(format!("{}\n", l).as_str());
         }
@@ -32,14 +32,14 @@ mod tests {
     use std::io::BufReader;
 
     #[test]
-    fn test_done() {
-        let mut reader = BufReader::new("[ ] first ()\n[ ] second ()\n".as_bytes());
-        assert!(done(&mut reader, 1).is_ok());
-        reader = BufReader::new("[ ] first ()\n[ ] second ()\n".as_bytes());
+    fn test_undone() {
+        let mut reader = BufReader::new("[x] first ()\n[x] second ()\n".as_bytes());
+        assert!(undone(&mut reader, 1).is_ok());
+        reader = BufReader::new("[x] first ()\n[x] second ()\n".as_bytes());
         assert_eq!(
-            done(&mut reader, 1).unwrap(),
-            "[x] first ()\n\
-             [ ] second ()\n"
+            undone(&mut reader, 1).unwrap(),
+            "[ ] first ()\n\
+             [x] second ()\n"
         );
     }
 }
