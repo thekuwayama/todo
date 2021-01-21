@@ -5,6 +5,7 @@ mod add;
 mod delete;
 mod done;
 mod list;
+mod record;
 mod undone;
 
 use clap::{App, Arg, SubCommand};
@@ -46,6 +47,14 @@ fn main() {
             SubCommand::with_name("undone")
                 .about("undone the task")
                 .arg(Arg::with_name("index").required(true)),
+        )
+        .subcommand(
+            SubCommand::with_name("record")
+                .about("record elapsed time")
+                .args(&[
+                    Arg::with_name("index").required(true),
+                    Arg::with_name("time").required(true),
+                ]),
         );
 
     let path = log_file_path();
@@ -114,6 +123,22 @@ fn main() {
                 i.value_of("index").unwrap().parse::<u32>().unwrap(),
             )
             .unwrap_or_else(|e| panic!("failed to undone a task: {}", e));
+            let mut writer = OpenOptions::new()
+                .write(true)
+                .open(path.clone())
+                .expect(format!("failed to file open {}", path).as_str());
+            writer
+                .write_all(result.as_bytes())
+                .unwrap_or_else(|e| panic!("failed to undone a task: {}", e));
+            ()
+        }
+        ("record", Some(it)) => {
+            let result = record::record(
+                &mut reader,
+                it.value_of("index").unwrap().parse::<u32>().unwrap(),
+                it.value_of("time").unwrap().parse::<f32>().unwrap(),
+            )
+            .unwrap_or_else(|e| panic!("failed to record time: {}", e));
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(path.clone())

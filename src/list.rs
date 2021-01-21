@@ -7,7 +7,7 @@ const TODO: &str = "\u{2610}";
 const DONE: &str = "\u{2611}";
 
 pub fn list<R: BufRead>(reader: &mut R) -> Result<String, Error> {
-    let re = Regex::new(r"^(\[.\]) (.+) \((\d*)\)$").unwrap();
+    let re = Regex::new(r"^(\[.\]) (.+) \(([\d.]*)\)$").unwrap();
     let mut w = String::new();
 
     let mut index = 1;

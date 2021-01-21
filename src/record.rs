@@ -1,7 +1,7 @@
 use regex::Regex;
 use std::io::{BufRead, Error, ErrorKind};
 
-pub fn done<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Error> {
+pub fn record<R: BufRead>(reader: &mut R, i: u32, t: f32) -> Result<String, Error> {
     let re = Regex::new(r"^(\[.\]) (.+) \(([\d.]*)\)$").unwrap();
     let mut w = String::new();
 
@@ -12,10 +12,10 @@ pub fn done<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Error> {
             .captures(l.as_str())
             .ok_or(Error::new(ErrorKind::InvalidInput, "format error"))?;
         if i == index {
+            let c = caps.get(1).map_or("", |m| m.as_str());
             let s = caps.get(2).map_or("", |m| m.as_str());
-            let t = caps.get(3).map_or("", |m| m.as_str());
 
-            w.push_str(format!("[x] {} ({})\n", s, t).as_str());
+            w.push_str(format!("{} {} ({:.1})\n", c, s, t).as_str());
         } else {
             w.push_str(format!("{}\n", l).as_str());
         }
@@ -36,14 +36,14 @@ mod tests {
     use std::io::BufReader;
 
     #[test]
-    fn test_done() {
-        let mut reader = BufReader::new("[ ] first ()\n[ ] second ()\n".as_bytes());
-        assert!(done(&mut reader, 1).is_ok());
-        reader = BufReader::new("[ ] first ()\n[ ] second ()\n".as_bytes());
+    fn test_record() {
+        let mut reader = BufReader::new("[x] first ()\n[x] second ()\n".as_bytes());
+        assert!(record(&mut reader, 1, 0.5).is_ok());
+        reader = BufReader::new("[x] first ()\n[x] second ()\n".as_bytes());
         assert_eq!(
-            done(&mut reader, 1).unwrap(),
-            "[x] first ()\n\
-             [ ] second ()\n"
+            record(&mut reader, 1, 0.5).unwrap(),
+            "[x] first (0.5)\n\
+             [x] second ()\n"
         );
     }
 }
