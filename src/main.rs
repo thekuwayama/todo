@@ -15,7 +15,7 @@ mod unrecord;
 use chrono::offset::Local;
 use clap::{App, Arg, SubCommand};
 use std::env;
-use std::fs::OpenOptions;
+use std::fs::{remove_file, OpenOptions};
 use std::io::prelude::*;
 use std::io::BufReader;
 
@@ -33,6 +33,7 @@ fn main() {
         .version(crate_version!())
         .about(crate_description!())
         .subcommand(SubCommand::with_name("list").about("show todo list"))
+        .subcommand(SubCommand::with_name("clear").about("clear todo list"))
         .subcommand(
             SubCommand::with_name("add")
                 .about("add the task")
@@ -93,6 +94,10 @@ fn main() {
             let result =
                 list::list(&mut reader).unwrap_or_else(|e| panic!("failed to list: {}", e));
             println!("{}", result);
+            ()
+        }
+        ("clear", _) => {
+            let _ = remove_file(path.clone());
             ()
         }
         ("add", Some(s)) => {

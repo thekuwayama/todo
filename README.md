@@ -22,6 +22,7 @@ FLAGS:
 
 SUBCOMMANDS:
     add         add the task
+    clear       clear todo list
     delete      delete the task
     done        done the task
     help        Prints this message or the help of the given subcommand(s)
