@@ -3,7 +3,7 @@
 [![CI](https://github.com/thekuwayama/todo/workflows/CI/badge.svg)](https://github.com/thekuwayama/todo/actions?workflow=CI)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://raw.githubusercontent.com/thekuwayama/todo/master/LICENSE.txt)
 
-`todo` is a simple todo list written in Rust.
+`todo` is a simple todo list command-line tool written in Rust.
 
 
 ## Usage
@@ -11,7 +11,7 @@
 ```bash
 $ todo
 todo 0.1.0
-todo
+simple todo list command-line tool
 
 USAGE:
     todo [SUBCOMMAND]
@@ -27,6 +27,7 @@ SUBCOMMANDS:
     help        Prints this message or the help of the given subcommand(s)
     list        show todo list
     record      record elapsed time
+    report      report today's achievements
     swap        swap two tasks
     undone      undone the task
     unrecord    unrecord elapsed time
