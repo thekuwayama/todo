@@ -21,12 +21,15 @@ FLAGS:
     -V, --version    Prints version information
 
 SUBCOMMANDS:
-    add       add the task
-    delete    delete the task
-    done      done the task
-    help      Prints this message or the help of the given subcommand(s)
-    list      show todo list
-    undone    undone the task
+    add         add the task
+    delete      delete the task
+    done        done the task
+    help        Prints this message or the help of the given subcommand(s)
+    list        show todo list
+    record      record elapsed time
+    swap        swap two tasks
+    undone      undone the task
+    unrecord    unrecord elapsed time
 ```
 
 

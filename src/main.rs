@@ -6,6 +6,7 @@ mod delete;
 mod done;
 mod list;
 mod record;
+mod swap;
 mod undone;
 mod unrecord;
 
@@ -61,6 +62,14 @@ fn main() {
             SubCommand::with_name("unrecord")
                 .about("unrecord elapsed time")
                 .arg(Arg::with_name("index").required(true)),
+        )
+        .subcommand(
+            SubCommand::with_name("swap")
+                .about("swap two tasks")
+                .args(&[
+                    Arg::with_name("index1").required(true),
+                    Arg::with_name("index2").required(true),
+                ]),
         );
 
     let path = log_file_path();
@@ -170,6 +179,22 @@ fn main() {
             writer
                 .set_len(result.as_bytes().len() as u64)
                 .unwrap_or_else(|e| panic!("failed to unrecord time: {}", e));
+            ()
+        }
+        ("swap", Some(ii)) => {
+            let result = swap::swap(
+                &mut reader,
+                ii.value_of("index1").unwrap().parse::<u32>().unwrap(),
+                ii.value_of("index2").unwrap().parse::<u32>().unwrap(),
+            )
+            .unwrap_or_else(|e| panic!("failed to swap tasks: {}", e));
+            let mut writer = OpenOptions::new()
+                .write(true)
+                .open(path.clone())
+                .expect(format!("failed to file open {}", path).as_str());
+            writer
+                .write_all(result.as_bytes())
+                .unwrap_or_else(|e| panic!("failed to swap tasks: {}", e));
             ()
         }
         _ => {

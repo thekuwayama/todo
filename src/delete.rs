@@ -6,7 +6,7 @@ pub fn delete<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Error> {
     let mut index = 1;
     for line in reader.lines() {
         let l = line?;
-        if i != index {
+        if index != i {
             w.push_str(format!("{}\n", l).as_str());
         }
         index += 1;

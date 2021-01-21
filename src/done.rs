@@ -11,7 +11,7 @@ pub fn done<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Error> {
         let caps = re
             .captures(l.as_str())
             .ok_or(Error::new(ErrorKind::InvalidInput, "format error"))?;
-        if i == index {
+        if index == i {
             let s = caps.get(2).map_or("", |m| m.as_str());
             let t = caps.get(3).map_or("", |m| m.as_str());
 
