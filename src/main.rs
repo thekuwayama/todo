@@ -7,6 +7,7 @@ mod done;
 mod list;
 mod record;
 mod undone;
+mod unrecord;
 
 use clap::{App, Arg, SubCommand};
 use std::env;
@@ -55,6 +56,11 @@ fn main() {
                     Arg::with_name("index").required(true),
                     Arg::with_name("time").required(true),
                 ]),
+        )
+        .subcommand(
+            SubCommand::with_name("unrecord")
+                .about("unrecord elapsed time")
+                .arg(Arg::with_name("index").required(true)),
         );
 
     let path = log_file_path();
@@ -145,7 +151,25 @@ fn main() {
                 .expect(format!("failed to file open {}", path).as_str());
             writer
                 .write_all(result.as_bytes())
-                .unwrap_or_else(|e| panic!("failed to undone a task: {}", e));
+                .unwrap_or_else(|e| panic!("failed to record time: {}", e));
+            ()
+        }
+        ("unrecord", Some(i)) => {
+            let result = unrecord::unrecord(
+                &mut reader,
+                i.value_of("index").unwrap().parse::<u32>().unwrap(),
+            )
+            .unwrap_or_else(|e| panic!("failed to unrecord time: {}", e));
+            let mut writer = OpenOptions::new()
+                .write(true)
+                .open(path.clone())
+                .expect(format!("failed to file open {}", path).as_str());
+            writer
+                .write_all(result.as_bytes())
+                .unwrap_or_else(|e| panic!("failed to unrecord time: {}", e));
+            writer
+                .set_len(result.as_bytes().len() as u64)
+                .unwrap_or_else(|e| panic!("failed to unrecord time: {}", e));
             ()
         }
         _ => {

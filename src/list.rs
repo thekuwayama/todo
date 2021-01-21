@@ -7,7 +7,7 @@ const TODO: &str = "\u{2610}";
 const DONE: &str = "\u{2611}";
 
 pub fn list<R: BufRead>(reader: &mut R) -> Result<String, Error> {
-    let re = Regex::new(r"^(\[.\]) (.+) \(([\d.]*)\)$").unwrap();
+    let re = Regex::new(r"^(\[.\]) (.+) \(((\d+\.\d+)?)\)$").unwrap();
     let mut w = String::new();
 
     let mut index = 1;
@@ -42,18 +42,18 @@ mod tests {
     #[test]
     fn test_list() {
         let mut reader = BufReader::new(
-            "[x] first ()\n[x] second (2)\n[ ] third ()\n[ ] fourth (4)\n".as_bytes(),
+            "[x] first ()\n[x] second (2.0)\n[ ] third ()\n[ ] fourth (4.0)\n".as_bytes(),
         );
         assert!(list(&mut reader).is_ok());
         reader = BufReader::new(
-            "[x] first ()\n[x] second (2)\n[ ] third ()\n[ ] fourth (4)\n".as_bytes(),
+            "[x] first ()\n[x] second (2.0)\n[ ] third ()\n[ ] fourth (4.0)\n".as_bytes(),
         );
         assert_eq!(
             list(&mut reader).unwrap(),
             "\u{2611} 001: first\n\
-             \u{2611} 002: second (2)\n\
+             \u{2611} 002: second (2.0)\n\
              \u{2610} 003: third\n\
-             \u{2610} 004: fourth (4)\n"
+             \u{2610} 004: fourth (4.0)\n"
         );
     }
 }
