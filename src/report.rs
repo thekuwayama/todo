@@ -1,0 +1,86 @@
+extern crate regex;
+
+use regex::Regex;
+use std::io::{BufRead, Error, ErrorKind};
+
+pub fn report<R: BufRead>(reader: &mut R, comment: &str, date: &str) -> Result<String, Error> {
+    let re = Regex::new(r"^(\[.\]) (.+) \(((\d+\.\d+)?)\)$").unwrap();
+    let mut doings = String::new();
+    let mut dones = String::new();
+    let mut todos = String::new();
+    let mut elapsed = 0.0;
+
+    for line in reader.lines() {
+        let l = line?;
+        let caps = re
+            .captures(l.as_str())
+            .ok_or(Error::new(ErrorKind::InvalidInput, "format error"))?;
+        match (
+            caps.get(1).map_or("", |m| m.as_str()),
+            caps.get(2).map_or("", |m| m.as_str()),
+            caps.get(3).map_or("", |m| m.as_str()),
+        ) {
+            ("[x]", s, "") => dones.push_str(format!("- {}\n", s).as_str()),
+            ("[x]", s, t) => {
+                dones.push_str(format!("- {} ({}h)\n", s, t).as_str());
+                elapsed += t.parse::<f32>().unwrap();
+            }
+            ("[ ]", s, "") => todos.push_str(format!("- {}\n", s).as_str()),
+            ("[ ]", s, t) => {
+                doings.push_str(format!("- {} ({}h)\n", s, t).as_str());
+                elapsed += t.parse::<f32>().unwrap();
+            }
+            _ => (),
+        };
+    }
+
+    Ok(format!(
+        "```\n\
+         ## {} ({:.1}h)\n\
+         ### 進行中のタスク\n\
+         {}\n\
+         ### 完了済みのタスク\n\
+         {}\n\
+         ### その他、今週対応予定のタスク (金曜日は来週対応予定のタスク)\n\
+         {}\n\
+         ### メモ、ぼやき\n\
+         {}\n\
+         ```\n",
+        date, elapsed, doings, dones, todos, comment
+    ))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::BufReader;
+
+    #[test]
+    fn test_report() {
+        let mut reader = BufReader::new(
+            "[x] first ()\n[x] second (2.0)\n[ ] third ()\n[ ] fourth (4.0)\n".as_bytes(),
+        );
+        assert!(report(&mut reader, "test", "2020/01/22").is_ok());
+        reader = BufReader::new(
+            "[x] first ()\n[x] second (2.0)\n[ ] third ()\n[ ] fourth (4.0)\n".as_bytes(),
+        );
+        assert_eq!(
+            report(&mut reader, "test", "2020/01/22").unwrap(),
+            "```\n\
+             ## 2020/01/22 (6.0h)\n\
+             ### 進行中のタスク\n\
+             - fourth (4.0h)\n\
+             \n\
+             ### 完了済みのタスク\n\
+             - first\n\
+             - second (2.0h)\n\
+             \n\
+             ### その他、今週対応予定のタスク (金曜日は来週対応予定のタスク)\n\
+             - third\n\
+             \n\
+             ### メモ、ぼやき\n\
+             test\n\
+             ```\n",
+        );
+    }
+}

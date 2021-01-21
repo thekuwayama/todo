@@ -1,15 +1,18 @@
 #[macro_use]
 extern crate clap;
+extern crate chrono;
 
 mod add;
 mod delete;
 mod done;
 mod list;
 mod record;
+mod report;
 mod swap;
 mod undone;
 mod unrecord;
 
+use chrono::offset::Local;
 use clap::{App, Arg, SubCommand};
 use std::env;
 use std::fs::OpenOptions;
@@ -70,6 +73,11 @@ fn main() {
                     Arg::with_name("index1").required(true),
                     Arg::with_name("index2").required(true),
                 ]),
+        )
+        .subcommand(
+            SubCommand::with_name("report")
+                .about("report today's achievements")
+                .args(&[Arg::with_name("comment"), Arg::with_name("date")]),
         );
 
     let path = log_file_path();
@@ -82,8 +90,9 @@ fn main() {
     let mut reader = BufReader::new(r);
     match app.clone().get_matches().subcommand() {
         ("list", _) => {
-            let res = list::list(&mut reader).unwrap_or_else(|e| panic!("failed to list: {}", e));
-            println!("{}", res);
+            let result =
+                list::list(&mut reader).unwrap_or_else(|e| panic!("failed to list: {}", e));
+            println!("{}", result);
             ()
         }
         ("add", Some(s)) => {
@@ -196,6 +205,16 @@ fn main() {
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to swap tasks: {}", e));
             ()
+        }
+        ("report", Some(cd)) => {
+            let result = report::report(
+                &mut reader,
+                cd.value_of("comment").unwrap_or(""),
+                cd.value_of("date")
+                    .unwrap_or(Local::today().format("%Y/%m/%d").to_string().as_str()),
+            )
+            .unwrap_or_else(|e| panic!("failed to report today's achievements: {}", e));
+            println!("{}", result);
         }
         _ => {
             let _ = app.to_owned().print_help();
