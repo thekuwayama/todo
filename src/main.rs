@@ -19,7 +19,7 @@ use std::fs::{remove_file, OpenOptions};
 use std::io::prelude::*;
 use std::io::BufReader;
 
-const FILE_NAME: &str = ".todo_history";
+const FILE_NAME: &str = ".todo";
 
 fn log_file_path() -> String {
     match env::var("HOME") {
