@@ -2,6 +2,7 @@
 extern crate clap;
 
 mod add;
+mod r#continue;
 mod delete;
 mod done;
 mod list;
@@ -15,7 +16,7 @@ mod utils;
 use chrono::offset::Local;
 use clap::{App, Arg, SubCommand};
 use std::env;
-use std::fs::{remove_file, OpenOptions};
+use std::fs::{remove_file, rename, OpenOptions};
 use std::io::prelude::*;
 use std::io::BufReader;
 
@@ -86,7 +87,8 @@ fn main() {
                         .takes_value(true)
                         .value_name("DATE"),
                 ),
-        );
+        )
+        .subcommand(SubCommand::with_name("continue").about("continue todo list"));
 
     let path = log_file_path();
     let r = OpenOptions::new()
@@ -94,12 +96,12 @@ fn main() {
         .read(true)
         .write(true)
         .open(path.clone())
-        .expect(format!("failed to file open {}", path).as_str());
+        .expect(format!("failed to open the file {}", path).as_str());
     let mut reader = BufReader::new(r);
     match app.clone().get_matches().subcommand() {
         ("list", _) => {
-            let result =
-                list::list(&mut reader).unwrap_or_else(|e| panic!("failed to list: {}", e));
+            let result = list::list(&mut reader)
+                .unwrap_or_else(|e| panic!("failed to show todo list: {}", e));
             println!("{}", result);
             ()
         }
@@ -114,7 +116,7 @@ fn main() {
                 .create(true)
                 .append(true)
                 .open(path.clone())
-                .expect(format!("failed to file open {}", path).as_str());
+                .expect(format!("failed to open the file {}", path).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to add a task: {}", e));
@@ -129,7 +131,7 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(path.clone())
-                .expect(format!("failed to file open {}", path).as_str());
+                .expect(format!("failed to open the file {}", path).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to delete a task: {}", e));
@@ -147,7 +149,7 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(path.clone())
-                .expect(format!("failed to file open {}", path).as_str());
+                .expect(format!("failed to open the file {}", path).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to done a task: {}", e));
@@ -162,7 +164,7 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(path.clone())
-                .expect(format!("failed to file open {}", path).as_str());
+                .expect(format!("failed to open the file {}", path).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to undone a task: {}", e));
@@ -178,7 +180,7 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(path.clone())
-                .expect(format!("failed to file open {}", path).as_str());
+                .expect(format!("failed to open the file {}", path).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to record time: {}", e));
@@ -193,7 +195,7 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(path.clone())
-                .expect(format!("failed to file open {}", path).as_str());
+                .expect(format!("failed to open the file {}", path).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to unrecord time: {}", e));
@@ -212,7 +214,7 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(path.clone())
-                .expect(format!("failed to file open {}", path).as_str());
+                .expect(format!("failed to open the file {}", path).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to swap tasks: {}", e));
@@ -227,6 +229,24 @@ fn main() {
             )
             .unwrap_or_else(|e| panic!("failed to report today's achievements: {}", e));
             println!("{}", result);
+        }
+        ("continue", _) => {
+            let result = r#continue::r#continue(&mut reader)
+                .unwrap_or_else(|e| panic!("failed to continue todo list: {}", e));
+            rename(path.clone(), format!("{}.backup", path))
+                .unwrap_or_else(|e| panic!("failed to rename the file: {}", e));
+            let mut writer = OpenOptions::new()
+                .create(true)
+                .write(true)
+                .open(path.clone())
+                .expect(format!("failed to open the file {}", path).as_str());
+            writer
+                .write_all(result.as_bytes())
+                .unwrap_or_else(|e| panic!("failed to continue todo list: {}", e));
+            writer
+                .set_len(result.as_bytes().len() as u64)
+                .unwrap_or_else(|e| panic!("failed to continue todo list: {}", e));
+            ()
         }
         _ => {
             let _ = app.to_owned().print_help();
