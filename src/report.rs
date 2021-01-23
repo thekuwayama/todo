@@ -57,11 +57,11 @@ mod tests {
     #[test]
     fn test_report() {
         let mut reader = BufReader::new(
-            "[x] first ()\n[x] second (2.0)\n[ ] third ()\n[ ] fourth (4.0)\n".as_bytes(),
-        );
-        assert!(report(&mut reader, "test", "2020/01/22").is_ok());
-        reader = BufReader::new(
-            "[x] first ()\n[x] second (2.0)\n[ ] third ()\n[ ] fourth (4.0)\n".as_bytes(),
+            "[x] first ()\n\
+             [x] second (2.0)\n\
+             [ ] third ()\n\
+             [ ] fourth (4.0)\n"
+                .as_bytes(),
         );
         assert_eq!(
             report(&mut reader, "test", "2020/01/22").unwrap(),

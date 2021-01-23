@@ -11,7 +11,7 @@
 ```bash
 $ todo
 todo 0.1.0
-simple todo list command-line tool
+simple command-line todo list
 
 USAGE:
     todo [SUBCOMMAND]
@@ -21,17 +21,19 @@ FLAGS:
     -V, --version    Prints version information
 
 SUBCOMMANDS:
-    add         add the task
-    clear       clear todo list
-    delete      delete the task
-    done        done the task
-    help        Prints this message or the help of the given subcommand(s)
-    list        show todo list
-    record      record elapsed time
-    report      report today's achievements
-    swap        swap two tasks
-    undone      undone the task
-    unrecord    unrecord elapsed time
+    add           add the task
+    clear         clear todo list
+    continue      continue todo list
+    delete        delete the task
+    done          done the task
+    help          Prints this message or the help of the given subcommand(s)
+    list          show todo list
+    record        record elapsed time
+    report        report today's achievements
+    swap          swap two tasks
+    uncontinue    uncontinue todo list
+    undone        undone the task
+    unrecord      unrecord elapsed time
 ```
 
 

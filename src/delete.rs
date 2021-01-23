@@ -26,9 +26,12 @@ mod tests {
 
     #[test]
     fn test_delete() {
-        let mut reader = BufReader::new("[ ] first ()\n[ ] second ()\n[ ] third ()\n".as_bytes());
-        assert!(delete(&mut reader, 2).is_ok());
-        reader = BufReader::new("[ ] first ()\n[ ] second ()\n[ ] third ()\n".as_bytes());
+        let mut reader = BufReader::new(
+            "[ ] first ()\n\
+             [ ] second ()\n\
+             [ ] third ()\n"
+                .as_bytes(),
+        );
         assert_eq!(
             delete(&mut reader, 2).unwrap(),
             "[ ] first ()\n\

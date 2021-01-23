@@ -2,7 +2,7 @@
 name = "todo"
 version = "0.1.0"
 authors = ["thekuwayama <thekuwayama@gmail.com>"]
-description = "simple todo list command-line tool"
+description = "simple command-line todo list"
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

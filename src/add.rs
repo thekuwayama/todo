@@ -10,7 +10,6 @@ mod tests {
 
     #[test]
     fn test_add() {
-        assert!(add("test").is_ok());
         assert_eq!(add("test").unwrap(), "[ ] test ()\n".to_string());
     }
 }
