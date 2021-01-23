@@ -19,6 +19,7 @@ use std::env;
 use std::fs::{remove_file, rename, OpenOptions};
 use std::io::prelude::*;
 use std::io::BufReader;
+use std::path::Path;
 
 const FILE_NAME: &str = ".todo";
 
@@ -88,7 +89,8 @@ fn main() {
                         .value_name("DATE"),
                 ),
         )
-        .subcommand(SubCommand::with_name("continue").about("continue todo list"));
+        .subcommand(SubCommand::with_name("continue").about("continue todo list"))
+        .subcommand(SubCommand::with_name("uncontinue").about("uncontinue todo list"));
 
     let path = log_file_path();
     let r = OpenOptions::new()
@@ -246,6 +248,13 @@ fn main() {
             writer
                 .set_len(result.as_bytes().len() as u64)
                 .unwrap_or_else(|e| panic!("failed to continue todo list: {}", e));
+            ()
+        }
+        ("uncontinue", _) => {
+            if Path::new(format!("{}.backup", path).as_str()).exists() {
+                rename(format!("{}.backup", path), path.clone())
+                    .unwrap_or_else(|e| panic!("failed to rename the file {}", e));
+            }
             ()
         }
         _ => {
