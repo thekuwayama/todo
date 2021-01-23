@@ -78,7 +78,14 @@ fn main() {
         .subcommand(
             SubCommand::with_name("report")
                 .about("report today's achievements")
-                .args(&[Arg::with_name("comment"), Arg::with_name("date")]),
+                .arg(Arg::with_name("comment").value_name("COMMENT"))
+                .arg(
+                    Arg::with_name("date")
+                        .short("d")
+                        .long("date")
+                        .takes_value(true)
+                        .value_name("DATE"),
+                ),
         );
 
     let path = log_file_path();
