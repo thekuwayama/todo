@@ -1,10 +1,9 @@
-extern crate regex;
-
-use regex::Regex;
 use std::io::{BufRead, Error, ErrorKind};
 
+use crate::utils;
+
 pub fn report<R: BufRead>(reader: &mut R, comment: &str, date: &str) -> Result<String, Error> {
-    let re = Regex::new(r"^(\[.\]) (.+) \(((\d+\.\d+)?)\)$").unwrap();
+    let re = utils::re();
     let mut doings = String::new();
     let mut dones = String::new();
     let mut todos = String::new();

@@ -1,8 +1,9 @@
-use regex::Regex;
 use std::io::{BufRead, Error, ErrorKind};
 
+use crate::utils;
+
 pub fn undone<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Error> {
-    let re = Regex::new(r"^(\[.\]) (.+) \(((\d+\.\d+)?)\)$").unwrap();
+    let re = utils::re();
     let mut w = String::new();
 
     let mut index = 1;

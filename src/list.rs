@@ -1,13 +1,12 @@
-extern crate regex;
-
-use regex::Regex;
 use std::io::{BufRead, Error, ErrorKind};
+
+use crate::utils;
 
 const TODO: &str = "\u{2610}";
 const DONE: &str = "\u{2611}";
 
 pub fn list<R: BufRead>(reader: &mut R) -> Result<String, Error> {
-    let re = Regex::new(r"^(\[.\]) (.+) \(((\d+\.\d+)?)\)$").unwrap();
+    let re = utils::re();
     let mut w = String::new();
 
     let mut index = 1;
