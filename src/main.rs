@@ -113,8 +113,7 @@ fn main() {
             ()
         }
         ("add", Some(s)) => {
-            let result = add::add(s.value_of("task").unwrap())
-                .unwrap_or_else(|e| panic!("failed to add a task: {}", e));
+            let result = add::add(s.value_of("task").unwrap());
             let mut writer = OpenOptions::new()
                 .create(true)
                 .append(true)

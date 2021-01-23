@@ -2,7 +2,11 @@ use std::io::{BufRead, Error, ErrorKind};
 
 use crate::utils;
 
-pub fn report<R: BufRead>(reader: &mut R, comment: &str, date: &str) -> Result<String, Error> {
+pub fn report<R: BufRead>(
+    reader: &mut R,
+    comment: &str,
+    date: &str,
+) -> Result<String, Box<dyn std::error::Error>> {
     let re = utils::re();
     let mut doings = String::new();
     let mut dones = String::new();
@@ -22,12 +26,12 @@ pub fn report<R: BufRead>(reader: &mut R, comment: &str, date: &str) -> Result<S
             ("[x]", s, "") => dones.push_str(format!("- {}\n", s).as_str()),
             ("[x]", s, t) => {
                 dones.push_str(format!("- {} ({}h)\n", s, t).as_str());
-                elapsed += t.parse::<f32>().unwrap();
+                elapsed += t.parse::<f32>()?;
             }
             ("[ ]", s, "") => todos.push_str(format!("- {}\n", s).as_str()),
             ("[ ]", s, t) => {
                 doings.push_str(format!("- {} ({}h)\n", s, t).as_str());
-                elapsed += t.parse::<f32>().unwrap();
+                elapsed += t.parse::<f32>()?;
             }
             _ => (),
         };

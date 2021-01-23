@@ -1,7 +1,5 @@
-use std::io::Error;
-
-pub fn add(s: &str) -> Result<String, Error> {
-    Ok(format!("[ ] {} ()\n", s).to_string())
+pub fn add(s: &str) -> String {
+    format!("[ ] {} ()\n", s).to_string()
 }
 
 #[cfg(test)]
@@ -10,6 +8,6 @@ mod tests {
 
     #[test]
     fn test_add() {
-        assert_eq!(add("test").unwrap(), "[ ] test ()\n".to_string());
+        assert_eq!(add("test"), "[ ] test ()\n".to_string());
     }
 }
