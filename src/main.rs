@@ -92,13 +92,14 @@ fn main() {
         .subcommand(SubCommand::with_name("continue").about("continue todo list"))
         .subcommand(SubCommand::with_name("uncontinue").about("uncontinue todo list"));
 
-    let path = log_file_path();
+    let fp = log_file_path();
+    let bp = format!("{}.backup", fp);
     let r = OpenOptions::new()
         .create(true)
         .read(true)
         .write(true)
-        .open(path.clone())
-        .expect(format!("failed to open the file {}", path).as_str());
+        .open(fp.clone())
+        .expect(format!("failed to open the file {}", fp).as_str());
     let mut reader = BufReader::new(r);
     match app.clone().get_matches().subcommand() {
         ("list", _) => {
@@ -108,7 +109,7 @@ fn main() {
             ()
         }
         ("clear", _) => {
-            let _ = remove_file(path.clone());
+            let _ = remove_file(fp.clone());
             ()
         }
         ("add", Some(s)) => {
@@ -117,8 +118,8 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .create(true)
                 .append(true)
-                .open(path.clone())
-                .expect(format!("failed to open the file {}", path).as_str());
+                .open(fp.clone())
+                .expect(format!("failed to open the file {}", fp).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to add a task: {}", e));
@@ -132,8 +133,8 @@ fn main() {
             .unwrap_or_else(|e| panic!("failed to delete a task: {}", e));
             let mut writer = OpenOptions::new()
                 .write(true)
-                .open(path.clone())
-                .expect(format!("failed to open the file {}", path).as_str());
+                .open(fp.clone())
+                .expect(format!("failed to open the file {}", fp).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to delete a task: {}", e));
@@ -150,8 +151,8 @@ fn main() {
             .unwrap_or_else(|e| panic!("failed to done a task: {}", e));
             let mut writer = OpenOptions::new()
                 .write(true)
-                .open(path.clone())
-                .expect(format!("failed to open the file {}", path).as_str());
+                .open(fp.clone())
+                .expect(format!("failed to open the file {}", fp).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to done a task: {}", e));
@@ -165,8 +166,8 @@ fn main() {
             .unwrap_or_else(|e| panic!("failed to undone a task: {}", e));
             let mut writer = OpenOptions::new()
                 .write(true)
-                .open(path.clone())
-                .expect(format!("failed to open the file {}", path).as_str());
+                .open(fp.clone())
+                .expect(format!("failed to open the file {}", fp).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to undone a task: {}", e));
@@ -181,8 +182,8 @@ fn main() {
             .unwrap_or_else(|e| panic!("failed to record time: {}", e));
             let mut writer = OpenOptions::new()
                 .write(true)
-                .open(path.clone())
-                .expect(format!("failed to open the file {}", path).as_str());
+                .open(fp.clone())
+                .expect(format!("failed to open the file {}", fp).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to record time: {}", e));
@@ -196,8 +197,8 @@ fn main() {
             .unwrap_or_else(|e| panic!("failed to unrecord time: {}", e));
             let mut writer = OpenOptions::new()
                 .write(true)
-                .open(path.clone())
-                .expect(format!("failed to open the file {}", path).as_str());
+                .open(fp.clone())
+                .expect(format!("failed to open the file {}", fp).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to unrecord time: {}", e));
@@ -215,8 +216,8 @@ fn main() {
             .unwrap_or_else(|e| panic!("failed to swap tasks: {}", e));
             let mut writer = OpenOptions::new()
                 .write(true)
-                .open(path.clone())
-                .expect(format!("failed to open the file {}", path).as_str());
+                .open(fp.clone())
+                .expect(format!("failed to open the file {}", fp).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to swap tasks: {}", e));
@@ -235,13 +236,12 @@ fn main() {
         ("continue", _) => {
             let result = r#continue::r#continue(&mut reader)
                 .unwrap_or_else(|e| panic!("failed to continue todo list: {}", e));
-            rename(path.clone(), format!("{}.backup", path))
-                .unwrap_or_else(|e| panic!("failed to rename the file: {}", e));
+            rename(fp.clone(), bp).unwrap_or_else(|e| panic!("failed to rename the file: {}", e));
             let mut writer = OpenOptions::new()
                 .create(true)
                 .write(true)
-                .open(path.clone())
-                .expect(format!("failed to open the file {}", path).as_str());
+                .open(fp.clone())
+                .expect(format!("failed to open the file {}", fp).as_str());
             writer
                 .write_all(result.as_bytes())
                 .unwrap_or_else(|e| panic!("failed to continue todo list: {}", e));
@@ -251,8 +251,8 @@ fn main() {
             ()
         }
         ("uncontinue", _) => {
-            if Path::new(format!("{}.backup", path).as_str()).exists() {
-                rename(format!("{}.backup", path), path.clone())
+            if Path::new(bp.as_str()).exists() {
+                rename(bp, fp.clone())
                     .unwrap_or_else(|e| panic!("failed to rename the file {}", e));
             }
             ()
