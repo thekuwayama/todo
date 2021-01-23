@@ -41,11 +41,11 @@ mod tests {
     #[test]
     fn test_list() {
         let mut reader = BufReader::new(
-            "[x] first ()\n[x] second (2.0)\n[ ] third ()\n[ ] fourth (4.0)\n".as_bytes(),
-        );
-        assert!(list(&mut reader).is_ok());
-        reader = BufReader::new(
-            "[x] first ()\n[x] second (2.0)\n[ ] third ()\n[ ] fourth (4.0)\n".as_bytes(),
+            "[x] first ()\n\
+             [x] second (2.0)\n\
+             [ ] third ()\n\
+             [ ] fourth (4.0)\n"
+                .as_bytes(),
         );
         assert_eq!(
             list(&mut reader).unwrap(),

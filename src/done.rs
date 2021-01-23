@@ -38,9 +38,11 @@ mod tests {
 
     #[test]
     fn test_done() {
-        let mut reader = BufReader::new("[ ] first ()\n[ ] second ()\n".as_bytes());
-        assert!(done(&mut reader, 1).is_ok());
-        reader = BufReader::new("[ ] first ()\n[ ] second ()\n".as_bytes());
+        let mut reader = BufReader::new(
+            "[ ] first ()\n\
+             [ ] second ()\n"
+                .as_bytes(),
+        );
         assert_eq!(
             done(&mut reader, 1).unwrap(),
             "[x] first ()\n\

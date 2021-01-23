@@ -40,9 +40,12 @@ mod tests {
 
     #[test]
     fn test_swap() {
-        let mut reader = BufReader::new("[x] first ()\n[x] second ()\n[x] third ()\n".as_bytes());
-        assert!(swap(&mut reader, 1, 3).is_ok());
-        reader = BufReader::new("[x] first ()\n[x] second ()\n[x] third ()\n".as_bytes());
+        let mut reader = BufReader::new(
+            "[x] first ()\n\
+             [x] second ()\n\
+             [x] third ()\n"
+                .as_bytes(),
+        );
         assert_eq!(
             swap(&mut reader, 1, 3).unwrap(),
             "[x] third ()\n\
