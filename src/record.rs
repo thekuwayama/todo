@@ -6,7 +6,7 @@ pub fn record<R: BufRead>(reader: &mut R, i: u32, t: f32) -> Result<String, Erro
     let re = utils::re();
     let mut w = String::new();
 
-    let mut index = 1;
+    let mut index = 0;
     for line in reader.lines() {
         let l = line?;
         let caps = re
@@ -44,7 +44,7 @@ mod tests {
                 .as_bytes(),
         );
         assert_eq!(
-            record(&mut reader, 1, 0.5).unwrap(),
+            record(&mut reader, 0, 0.5).unwrap(),
             "[x] first (0.5)\n\
              [x] second ()\n"
         );

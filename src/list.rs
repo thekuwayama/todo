@@ -9,7 +9,7 @@ pub fn list<R: BufRead>(reader: &mut R) -> Result<String, Error> {
     let re = utils::re();
     let mut w = String::new();
 
-    let mut index = 1;
+    let mut index = 0;
     for line in reader.lines() {
         let l = line?;
         let caps = re
@@ -49,10 +49,10 @@ mod tests {
         );
         assert_eq!(
             list(&mut reader).unwrap(),
-            "\u{2611} 001: first\n\
-             \u{2611} 002: second (2.0)\n\
-             \u{2610} 003: third\n\
-             \u{2610} 004: fourth (4.0)\n"
+            "\u{2611} 000: first\n\
+             \u{2611} 001: second (2.0)\n\
+             \u{2610} 002: third\n\
+             \u{2610} 003: fourth (4.0)\n"
         );
     }
 }
