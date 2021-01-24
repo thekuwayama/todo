@@ -20,6 +20,7 @@ use std::fs::{remove_file, rename, OpenOptions};
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::Path;
+use std::process;
 
 const FILE_NAME: &str = ".todo";
 
@@ -103,8 +104,10 @@ fn main() {
     let mut reader = BufReader::new(r);
     match app.clone().get_matches().subcommand() {
         ("list", _) => {
-            let result = list::list(&mut reader)
-                .unwrap_or_else(|e| panic!("failed to show todo list: {}", e));
+            let result = list::list(&mut reader).unwrap_or_else(|e| {
+                eprintln!("failed to show todo list: {}", e);
+                process::exit(1);
+            });
             println!("{}", result);
             ()
         }
@@ -119,9 +122,10 @@ fn main() {
                 .append(true)
                 .open(fp.clone())
                 .expect(format!("failed to open the file {}", fp).as_str());
-            writer
-                .write_all(result.as_bytes())
-                .unwrap_or_else(|e| panic!("failed to add a task: {}", e));
+            writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
+                eprintln!("failed to add a task: {}", e);
+                process::exit(1);
+            });
             ()
         }
         ("delete", Some(i)) => {
@@ -129,17 +133,24 @@ fn main() {
                 &mut reader,
                 i.value_of("index").unwrap().parse::<u32>().unwrap(),
             )
-            .unwrap_or_else(|e| panic!("failed to delete a task: {}", e));
+            .unwrap_or_else(|e| {
+                eprintln!("failed to delete a task: {}", e);
+                process::exit(1);
+            });
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(fp.clone())
                 .expect(format!("failed to open the file {}", fp).as_str());
-            writer
-                .write_all(result.as_bytes())
-                .unwrap_or_else(|e| panic!("failed to delete a task: {}", e));
+            writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
+                eprintln!("failed to delete a task: {}", e);
+                process::exit(1);
+            });
             writer
                 .set_len(result.as_bytes().len() as u64)
-                .unwrap_or_else(|e| panic!("failed to delete a task: {}", e));
+                .unwrap_or_else(|e| {
+                    eprintln!("failed to delete a task: {}", e);
+                    process::exit(1);
+                });
             ()
         }
         ("done", Some(i)) => {
@@ -147,14 +158,18 @@ fn main() {
                 &mut reader,
                 i.value_of("index").unwrap().parse::<u32>().unwrap(),
             )
-            .unwrap_or_else(|e| panic!("failed to done a task: {}", e));
+            .unwrap_or_else(|e| {
+                eprintln!("failed to done a task: {}", e);
+                process::exit(1);
+            });
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(fp.clone())
                 .expect(format!("failed to open the file {}", fp).as_str());
-            writer
-                .write_all(result.as_bytes())
-                .unwrap_or_else(|e| panic!("failed to done a task: {}", e));
+            writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
+                eprintln!("failed to done a task: {}", e);
+                process::exit(1);
+            });
             ()
         }
         ("undone", Some(i)) => {
@@ -162,14 +177,18 @@ fn main() {
                 &mut reader,
                 i.value_of("index").unwrap().parse::<u32>().unwrap(),
             )
-            .unwrap_or_else(|e| panic!("failed to undone a task: {}", e));
+            .unwrap_or_else(|e| {
+                eprintln!("failed to undone a task: {}", e);
+                process::exit(1);
+            });
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(fp.clone())
                 .expect(format!("failed to open the file {}", fp).as_str());
-            writer
-                .write_all(result.as_bytes())
-                .unwrap_or_else(|e| panic!("failed to undone a task: {}", e));
+            writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
+                eprintln!("failed to undone a task: {}", e);
+                process::exit(1);
+            });
             ()
         }
         ("record", Some(it)) => {
@@ -178,14 +197,18 @@ fn main() {
                 it.value_of("index").unwrap().parse::<u32>().unwrap(),
                 it.value_of("time").unwrap().parse::<f32>().unwrap(),
             )
-            .unwrap_or_else(|e| panic!("failed to record time: {}", e));
+            .unwrap_or_else(|e| {
+                eprintln!("failed to record time: {}", e);
+                process::exit(1);
+            });
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(fp.clone())
                 .expect(format!("failed to open the file {}", fp).as_str());
-            writer
-                .write_all(result.as_bytes())
-                .unwrap_or_else(|e| panic!("failed to record time: {}", e));
+            writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
+                eprintln!("failed to record time: {}", e);
+                process::exit(1);
+            });
             ()
         }
         ("unrecord", Some(i)) => {
@@ -193,17 +216,24 @@ fn main() {
                 &mut reader,
                 i.value_of("index").unwrap().parse::<u32>().unwrap(),
             )
-            .unwrap_or_else(|e| panic!("failed to unrecord time: {}", e));
+            .unwrap_or_else(|e| {
+                eprintln!("failed to unrecord time: {}", e);
+                process::exit(1);
+            });
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(fp.clone())
                 .expect(format!("failed to open the file {}", fp).as_str());
-            writer
-                .write_all(result.as_bytes())
-                .unwrap_or_else(|e| panic!("failed to unrecord time: {}", e));
+            writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
+                eprintln!("failed to unrecord time: {}", e);
+                process::exit(1);
+            });
             writer
                 .set_len(result.as_bytes().len() as u64)
-                .unwrap_or_else(|e| panic!("failed to unrecord time: {}", e));
+                .unwrap_or_else(|e| {
+                    eprintln!("failed to unrecord time: {}", e);
+                    process::exit(1);
+                });
             ()
         }
         ("swap", Some(ii)) => {
@@ -212,14 +242,18 @@ fn main() {
                 ii.value_of("index1").unwrap().parse::<u32>().unwrap(),
                 ii.value_of("index2").unwrap().parse::<u32>().unwrap(),
             )
-            .unwrap_or_else(|e| panic!("failed to swap tasks: {}", e));
+            .unwrap_or_else(|e| {
+                eprintln!("failed to swap tasks: {}", e);
+                process::exit(1);
+            });
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(fp.clone())
                 .expect(format!("failed to open the file {}", fp).as_str());
-            writer
-                .write_all(result.as_bytes())
-                .unwrap_or_else(|e| panic!("failed to swap tasks: {}", e));
+            writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
+                eprintln!("failed to swap tasks: {}", e);
+                process::exit(1);
+            });
             ()
         }
         ("report", Some(cd)) => {
@@ -229,30 +263,44 @@ fn main() {
                 cd.value_of("date")
                     .unwrap_or(Local::today().format("%Y/%m/%d").to_string().as_str()),
             )
-            .unwrap_or_else(|e| panic!("failed to report today's achievements: {}", e));
+            .unwrap_or_else(|e| {
+                eprintln!("failed to report today's achievements: {}", e);
+                process::exit(1);
+            });
             println!("{}", result);
         }
         ("continue", _) => {
-            let result = r#continue::r#continue(&mut reader)
-                .unwrap_or_else(|e| panic!("failed to continue todo list: {}", e));
-            rename(fp.clone(), bp).unwrap_or_else(|e| panic!("failed to rename the file: {}", e));
+            let result = r#continue::r#continue(&mut reader).unwrap_or_else(|e| {
+                eprintln!("failed to continue todo list: {}", e);
+                process::exit(1);
+            });
+            rename(fp.clone(), bp).unwrap_or_else(|e| {
+                eprintln!("failed to rename the file: {}", e);
+                process::exit(1);
+            });
             let mut writer = OpenOptions::new()
                 .create(true)
                 .write(true)
                 .open(fp.clone())
                 .expect(format!("failed to open the file {}", fp).as_str());
-            writer
-                .write_all(result.as_bytes())
-                .unwrap_or_else(|e| panic!("failed to continue todo list: {}", e));
+            writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
+                eprintln!("failed to continue todo list: {}", e);
+                process::exit(1);
+            });
             writer
                 .set_len(result.as_bytes().len() as u64)
-                .unwrap_or_else(|e| panic!("failed to continue todo list: {}", e));
+                .unwrap_or_else(|e| {
+                    eprintln!("failed to continue todo list: {}", e);
+                    process::exit(1);
+                });
             ()
         }
         ("uncontinue", _) => {
             if Path::new(bp.as_str()).exists() {
-                rename(bp, fp.clone())
-                    .unwrap_or_else(|e| panic!("failed to rename the file {}", e));
+                rename(bp, fp.clone()).unwrap_or_else(|e| {
+                    eprintln!("failed to rename the file {}", e);
+                    process::exit(1);
+                });
             }
             ()
         }
