@@ -6,7 +6,7 @@ pub fn undone<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Error> {
     let re = utils::re();
     let mut w = String::new();
 
-    let mut index = 1;
+    let mut index = 0;
     for line in reader.lines() {
         let l = line?;
         let caps = re
@@ -44,7 +44,7 @@ mod tests {
                 .as_bytes(),
         );
         assert_eq!(
-            undone(&mut reader, 1).unwrap(),
+            undone(&mut reader, 0).unwrap(),
             "[ ] first ()\n\
              [x] second ()\n"
         );

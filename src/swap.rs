@@ -8,7 +8,7 @@ pub fn swap<R: BufRead>(reader: &mut R, i1: u32, i2: u32) -> Result<String, Erro
     let lh = min(i1, i2);
     let rh = max(i1, i2);
 
-    let mut index = 1;
+    let mut index = 0;
     for line in reader.lines() {
         let l = line?;
         if index < lh || index > rh {
@@ -47,7 +47,7 @@ mod tests {
                 .as_bytes(),
         );
         assert_eq!(
-            swap(&mut reader, 1, 3).unwrap(),
+            swap(&mut reader, 0, 2).unwrap(),
             "[x] third ()\n\
              [x] second ()\n\
              [x] first ()\n"
