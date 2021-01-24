@@ -6,6 +6,15 @@
 `todo` is a simple todo list command-line tool written in Rust.
 
 
+## Install
+
+You can install `todo` with the following:
+
+```bash
+$ cargo install --git https://github.com/thekuwayama/todo.git --branch main
+```
+
+
 ## Usage
 
 ```bash
@@ -35,6 +44,14 @@ SUBCOMMANDS:
     undone        undone the task
     unrecord      unrecord elapsed time
 ```
+
+
+## Note
+
+`todo` is inspired by:
+
+- https://github.com/todotxt/todo.txt-cli
+- https://github.com/mattn/todo
 
 
 ## License
