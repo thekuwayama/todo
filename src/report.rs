@@ -38,8 +38,7 @@ pub fn report<R: BufRead>(
     }
 
     Ok(format!(
-        "```\n\
-         ## {} ({:.1}h)\n\
+        "## {} ({:.1}h)\n\
          ### 進行中のタスク\n\
          {}\n\
          ### 完了済みのタスク\n\
@@ -47,8 +46,7 @@ pub fn report<R: BufRead>(
          ### その他、今週対応予定のタスク (金曜日は来週対応予定のタスク)\n\
          {}\n\
          ### メモ、ぼやき\n\
-         {}\n\
-         ```\n",
+         {}\n",
         date, elapsed, doings, dones, todos, comment
     ))
 }
@@ -69,8 +67,7 @@ mod tests {
         );
         assert_eq!(
             report(&mut reader, "test", "2020/01/22").unwrap(),
-            "```\n\
-             ## 2020/01/22 (6.0h)\n\
+            "## 2020/01/22 (6.0h)\n\
              ### 進行中のタスク\n\
              - fourth (4.0h)\n\
              \n\
@@ -82,8 +79,7 @@ mod tests {
              - third\n\
              \n\
              ### メモ、ぼやき\n\
-             test\n\
-             ```\n",
+             test\n",
         );
     }
 }
