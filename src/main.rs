@@ -99,7 +99,7 @@ fn main() {
         .create(true)
         .read(true)
         .write(true)
-        .open(fp.clone())
+        .open(&fp)
         .expect(format!("failed to open the file {}", fp).as_str());
     let mut reader = BufReader::new(r);
     match app.clone().get_matches().subcommand() {
@@ -112,7 +112,7 @@ fn main() {
             ()
         }
         ("clear", _) => {
-            let _ = remove_file(fp.clone());
+            let _ = remove_file(&fp);
             ()
         }
         ("add", Some(s)) => {
@@ -120,7 +120,7 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .create(true)
                 .append(true)
-                .open(fp.clone())
+                .open(&fp)
                 .expect(format!("failed to open the file {}", fp).as_str());
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to add a task: {}", e);
@@ -139,7 +139,7 @@ fn main() {
             });
             let mut writer = OpenOptions::new()
                 .write(true)
-                .open(fp.clone())
+                .open(&fp)
                 .expect(format!("failed to open the file {}", fp).as_str());
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to delete a task: {}", e);
@@ -164,7 +164,7 @@ fn main() {
             });
             let mut writer = OpenOptions::new()
                 .write(true)
-                .open(fp.clone())
+                .open(&fp)
                 .expect(format!("failed to open the file {}", fp).as_str());
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to done a task: {}", e);
@@ -183,7 +183,7 @@ fn main() {
             });
             let mut writer = OpenOptions::new()
                 .write(true)
-                .open(fp.clone())
+                .open(&fp)
                 .expect(format!("failed to open the file {}", fp).as_str());
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to undone a task: {}", e);
@@ -203,7 +203,7 @@ fn main() {
             });
             let mut writer = OpenOptions::new()
                 .write(true)
-                .open(fp.clone())
+                .open(&fp)
                 .expect(format!("failed to open the file {}", fp).as_str());
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to record time: {}", e);
@@ -222,7 +222,7 @@ fn main() {
             });
             let mut writer = OpenOptions::new()
                 .write(true)
-                .open(fp.clone())
+                .open(&fp)
                 .expect(format!("failed to open the file {}", fp).as_str());
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to unrecord time: {}", e);
@@ -248,7 +248,7 @@ fn main() {
             });
             let mut writer = OpenOptions::new()
                 .write(true)
-                .open(fp.clone())
+                .open(&fp)
                 .expect(format!("failed to open the file {}", fp).as_str());
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to swap tasks: {}", e);
@@ -274,14 +274,14 @@ fn main() {
                 eprintln!("failed to continue todo list: {}", e);
                 process::exit(1);
             });
-            rename(fp.clone(), bp).unwrap_or_else(|e| {
+            rename(&fp, bp).unwrap_or_else(|e| {
                 eprintln!("failed to rename the file: {}", e);
                 process::exit(1);
             });
             let mut writer = OpenOptions::new()
                 .create(true)
                 .write(true)
-                .open(fp.clone())
+                .open(&fp)
                 .expect(format!("failed to open the file {}", fp).as_str());
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to continue todo list: {}", e);
@@ -297,7 +297,7 @@ fn main() {
         }
         ("uncontinue", _) => {
             if Path::new(bp.as_str()).exists() {
-                rename(bp, fp.clone()).unwrap_or_else(|e| {
+                rename(bp, &fp).unwrap_or_else(|e| {
                     eprintln!("failed to rename the file {}", e);
                     process::exit(1);
                 });
