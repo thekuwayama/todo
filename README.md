@@ -35,6 +35,7 @@ SUBCOMMANDS:
     continue      continue todo list
     delete        delete the task
     done          done the task
+    edit          edit the task description
     help          Prints this message or the help of the given subcommand(s)
     list          show todo list
     record        record elapsed time
