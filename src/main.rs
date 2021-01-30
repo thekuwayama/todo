@@ -5,6 +5,7 @@ mod add;
 mod r#continue;
 mod delete;
 mod done;
+mod edit;
 mod list;
 mod record;
 mod report;
@@ -46,6 +47,14 @@ fn main() {
             SubCommand::with_name("delete")
                 .about("delete the task")
                 .arg(Arg::with_name("index").required(true)),
+        )
+        .subcommand(
+            SubCommand::with_name("edit")
+                .about("edit the task description")
+                .args(&[
+                    Arg::with_name("index").required(true),
+                    Arg::with_name("task").required(true),
+                ]),
         )
         .subcommand(
             SubCommand::with_name("done")
@@ -149,6 +158,32 @@ fn main() {
                 .set_len(result.as_bytes().len() as u64)
                 .unwrap_or_else(|e| {
                     eprintln!("failed to delete a task: {}", e);
+                    process::exit(1);
+                });
+            ()
+        }
+        ("edit", Some(it)) => {
+            let result = edit::edit(
+                &mut reader,
+                it.value_of("index").unwrap().parse::<u32>().unwrap(),
+                it.value_of("task").unwrap(),
+            )
+            .unwrap_or_else(|e| {
+                eprintln!("failed to edit task description: {}", e);
+                process::exit(1);
+            });
+            let mut writer = OpenOptions::new()
+                .write(true)
+                .open(&fp)
+                .expect(format!("failed to open the file {}", fp).as_str());
+            writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
+                eprintln!("failed to edit task description: {}", e);
+                process::exit(1);
+            });
+            writer
+                .set_len(result.as_bytes().len() as u64)
+                .unwrap_or_else(|e| {
+                    eprintln!("failed to edit task description: {}", e);
                     process::exit(1);
                 });
             ()
