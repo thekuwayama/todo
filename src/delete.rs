@@ -1,6 +1,7 @@
+use std::error;
 use std::io::{BufRead, Error, ErrorKind};
 
-pub fn delete<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Error> {
+pub fn delete<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Box<dyn error::Error>> {
     let mut w = String::new();
 
     let mut index = 0;
@@ -13,7 +14,10 @@ pub fn delete<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Error> {
     }
 
     if index <= i {
-        return Err(Error::new(ErrorKind::InvalidInput, "invalid index"));
+        return Err(Box::new(Error::new(
+            ErrorKind::InvalidInput,
+            "invalid index",
+        )));
     }
 
     Ok(w)

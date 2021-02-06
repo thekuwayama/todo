@@ -1,3 +1,4 @@
+use std::error;
 use std::io::{BufRead, Error, ErrorKind};
 
 use crate::utils;
@@ -6,7 +7,7 @@ pub fn report<R: BufRead>(
     reader: &mut R,
     comment: &str,
     date: &str,
-) -> Result<String, Box<dyn std::error::Error>> {
+) -> Result<String, Box<dyn error::Error>> {
     let re = utils::re();
     let mut doings = String::new();
     let mut dones = String::new();

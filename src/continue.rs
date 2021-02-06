@@ -1,8 +1,9 @@
+use std::error;
 use std::io::{BufRead, Error, ErrorKind};
 
 use crate::utils;
 
-pub fn r#continue<R: BufRead>(reader: &mut R) -> Result<String, Error> {
+pub fn r#continue<R: BufRead>(reader: &mut R) -> Result<String, Box<dyn error::Error>> {
     let re = utils::re();
     let mut w = String::new();
 
