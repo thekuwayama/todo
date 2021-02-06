@@ -1,7 +1,8 @@
 use std::cmp::{max, min};
+use std::error;
 use std::io::{BufRead, Error, ErrorKind};
 
-pub fn swap<R: BufRead>(reader: &mut R, i1: u32, i2: u32) -> Result<String, Error> {
+pub fn swap<R: BufRead>(reader: &mut R, i1: u32, i2: u32) -> Result<String, Box<dyn error::Error>> {
     let mut w = String::new();
     let mut buf = String::new();
     let mut tmp = String::new();
@@ -27,7 +28,10 @@ pub fn swap<R: BufRead>(reader: &mut R, i1: u32, i2: u32) -> Result<String, Erro
     }
 
     if index <= lh || index <= rh {
-        return Err(Error::new(ErrorKind::InvalidInput, "invalid index"));
+        return Err(Box::new(Error::new(
+            ErrorKind::InvalidInput,
+            "invalid index",
+        )));
     }
 
     Ok(w)

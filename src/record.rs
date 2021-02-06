@@ -1,8 +1,9 @@
+use std::error;
 use std::io::{BufRead, Error, ErrorKind};
 
 use crate::utils;
 
-pub fn record<R: BufRead>(reader: &mut R, i: u32, t: f32) -> Result<String, Error> {
+pub fn record<R: BufRead>(reader: &mut R, i: u32, t: f32) -> Result<String, Box<dyn error::Error>> {
     let re = utils::re();
     let mut w = String::new();
 
@@ -25,7 +26,10 @@ pub fn record<R: BufRead>(reader: &mut R, i: u32, t: f32) -> Result<String, Erro
     }
 
     if index <= i {
-        return Err(Error::new(ErrorKind::InvalidInput, "invalid index"));
+        return Err(Box::new(Error::new(
+            ErrorKind::InvalidInput,
+            "invalid index",
+        )));
     }
 
     Ok(w)
