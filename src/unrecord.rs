@@ -3,13 +3,16 @@ use std::io::{BufRead, Error, ErrorKind};
 
 use crate::utils;
 
-pub fn unrecord<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Box<dyn error::Error>> {
+pub fn unrecord<R: BufRead>(
+    reader: &mut R,
+    i: u32,
+) -> Result<String, Box<dyn error::Error + Send + Sync + 'static>> {
     let re = utils::re();
     let mut w = String::new();
 
     let mut index = 0;
-    for line in reader.lines() {
-        let l = line?;
+    let mut l = String::new();
+    while reader.read_line(&mut l)? > 0 {
         let caps = re
             .captures(l.as_str())
             .ok_or(Error::new(ErrorKind::InvalidInput, "format error"))?;
@@ -19,10 +22,11 @@ pub fn unrecord<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Box<dyn er
 
             w.push_str(format!("{} {} ()\n", c, s).as_str());
         } else {
-            w.push_str(format!("{}\n", l).as_str());
+            w.push_str(l.as_str());
         }
 
         index += 1;
+        l.clear();
     }
 
     if index <= i {
@@ -41,7 +45,7 @@ mod tests {
     use std::io::BufReader;
 
     #[test]
-    fn test_record() {
+    fn test_unrecord() {
         let mut reader = BufReader::new(
             "[x] first (0.5)\n\
              [x] second ()\n"

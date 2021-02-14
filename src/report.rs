@@ -7,15 +7,15 @@ pub fn report<R: BufRead>(
     reader: &mut R,
     comment: &str,
     date: &str,
-) -> Result<String, Box<dyn error::Error>> {
+) -> Result<String, Box<dyn error::Error + Send + Sync + 'static>> {
     let re = utils::re();
     let mut doings = String::new();
     let mut dones = String::new();
     let mut todos = String::new();
     let mut elapsed = 0.0;
 
-    for line in reader.lines() {
-        let l = line?;
+    let mut l = String::new();
+    while reader.read_line(&mut l)? > 0 {
         let caps = re
             .captures(l.as_str())
             .ok_or(Error::new(ErrorKind::InvalidInput, "format error"))?;
@@ -36,6 +36,8 @@ pub fn report<R: BufRead>(
             }
             _ => (),
         };
+
+        l.clear();
     }
 
     Ok(format!(

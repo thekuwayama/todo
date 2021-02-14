@@ -6,13 +6,15 @@ use crate::utils;
 const TODO: &str = "\u{2610}";
 const DONE: &str = "\u{2611}";
 
-pub fn list<R: BufRead>(reader: &mut R) -> Result<String, Box<dyn error::Error>> {
+pub fn list<R: BufRead>(
+    reader: &mut R,
+) -> Result<String, Box<dyn error::Error + Send + Sync + 'static>> {
     let re = utils::re();
     let mut w = String::new();
 
     let mut index = 0;
-    for line in reader.lines() {
-        let l = line?;
+    let mut l = String::new();
+    while reader.read_line(&mut l)? > 0 {
         let caps = re
             .captures(l.as_str())
             .ok_or(Error::new(ErrorKind::InvalidInput, "format error"))?;
@@ -29,6 +31,7 @@ pub fn list<R: BufRead>(reader: &mut R) -> Result<String, Box<dyn error::Error>>
         };
 
         index += 1;
+        l.clear();
     }
 
     Ok(w)
