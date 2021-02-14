@@ -3,12 +3,14 @@ use std::io::{BufRead, Error, ErrorKind};
 
 use crate::utils;
 
-pub fn r#continue<R: BufRead>(reader: &mut R) -> Result<String, Box<dyn error::Error>> {
+pub fn r#continue<R: BufRead>(
+    reader: &mut R,
+) -> Result<String, Box<dyn error::Error + Send + Sync + 'static>> {
     let re = utils::re();
     let mut w = String::new();
 
-    for line in reader.lines() {
-        let l = line?;
+    let mut l = String::new();
+    while reader.read_line(&mut l)? > 0 {
         let caps = re
             .captures(l.as_str())
             .ok_or(Error::new(ErrorKind::InvalidInput, "format error"))?;
@@ -20,6 +22,8 @@ pub fn r#continue<R: BufRead>(reader: &mut R) -> Result<String, Box<dyn error::E
             ("[ ]", s) => w.push_str(format!("[ ] {} ()\n", s).as_str()),
             _ => (),
         };
+
+        l.clear();
     }
 
     Ok(w)
@@ -31,7 +35,7 @@ mod tests {
     use std::io::BufReader;
 
     #[test]
-    fn test_list() {
+    fn test_continue() {
         let mut reader = BufReader::new(
             "[x] first ()\n\
              [x] second (2.0)\n\

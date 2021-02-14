@@ -1,16 +1,21 @@
 use std::error;
 use std::io::{BufRead, Error, ErrorKind};
 
-pub fn delete<R: BufRead>(reader: &mut R, i: u32) -> Result<String, Box<dyn error::Error>> {
+pub fn delete<R: BufRead>(
+    reader: &mut R,
+    i: u32,
+) -> Result<String, Box<dyn error::Error + Send + Sync + 'static>> {
     let mut w = String::new();
 
     let mut index = 0;
-    for line in reader.lines() {
-        let l = line?;
+    let mut l = String::new();
+    while reader.read_line(&mut l)? > 0 {
         if index != i {
-            w.push_str(format!("{}\n", l).as_str());
+            w.push_str(l.as_str());
         }
+
         index += 1;
+        l.clear();
     }
 
     if index <= i {
