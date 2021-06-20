@@ -10,14 +10,14 @@
 
 You can install `todo` with the following:
 
-```bash
+```sh
 $ cargo install --git https://github.com/thekuwayama/todo.git --branch main
 ```
 
 
 ## Usage
 
-```bash
+```sh
 $ todo
 todo 0.1.0
 simple command-line todo list
@@ -44,6 +44,95 @@ SUBCOMMANDS:
     uncontinue    uncontinue todo list
     undone        undone the task
     unrecord      unrecord elapsed time
+```
+
+List todo
+
+```sh
+$ todo list
+☐ 000: 朝起きる
+☐ 001: 歯を磨く
+☐ 002: シャワーを浴びる
+
+```
+
+Add new todo
+
+```sh
+$ todo add 散歩する
+$ todo list
+☐ 000: 朝起きる
+☐ 001: 歯を磨く
+☐ 002: シャワーを浴びる
+☐ 003: 散歩する
+
+```
+
+Edit todo
+
+```sh
+$ todo edit 3 お水を一杯飲む
+$ todo list
+☐ 000: 朝起きる
+☐ 001: 歯を磨く
+☐ 002: シャワーを浴びる
+☐ 003: お水を一杯飲む
+```
+
+Done todo
+
+```sh
+$ todo done 0
+$ todo done 1
+$ todo done 2
+$ todo list
+☑ 000: 朝起きる
+☑ 001: 歯を磨く
+☑ 002: シャワーを浴びる
+☐ 003: お水を一杯飲む
+
+```
+
+Record elapsed time
+
+```sh
+$ todo record 0 0.1
+$ todo record 1 0.1
+$ todo record 2 0.5
+$ todo list
+☑ 000: 朝起きる (0.1)
+☑ 001: 歯を磨く (0.1)
+☑ 002: シャワーを浴びる (0.5)
+☐ 003: お水を一杯飲む
+
+```
+
+Report today's achievements
+
+```sh
+$ todo report
+## 2021/06/20 (0.7h)
+### 進行中のタスク
+
+### 完了済みのタスク
+- 朝起きる (0.1h)
+- 歯を磨く (0.1h)
+- シャワーを浴びる (0.5h)
+
+### その他、今週対応予定のタスク (金曜日は来週対応予定のタスク)
+- お水を一杯飲む
+
+### メモ、ぼやき
+
+```
+
+Continue todo list
+
+```sh
+$ todo continue
+$ todo list
+☐ 000: お水を一杯飲む
+
 ```
 
 
