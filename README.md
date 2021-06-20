@@ -10,14 +10,14 @@
 
 You can install `todo` with the following:
 
-```sh
+```sh-session
 $ cargo install --git https://github.com/thekuwayama/todo.git --branch main
 ```
 
 
 ## Usage
 
-```sh
+```sh-session
 $ todo
 todo 0.1.0
 simple command-line todo list
@@ -48,7 +48,7 @@ SUBCOMMANDS:
 
 List todo
 
-```sh
+```sh-session
 $ todo list
 ☐ 000: 朝起きる
 ☐ 001: 歯を磨く
@@ -58,7 +58,7 @@ $ todo list
 
 Add new todo
 
-```sh
+```sh-session
 $ todo add 散歩する
 $ todo list
 ☐ 000: 朝起きる
@@ -70,7 +70,7 @@ $ todo list
 
 Edit todo
 
-```sh
+```sh-session
 $ todo edit 3 お水を一杯飲む
 $ todo list
 ☐ 000: 朝起きる
@@ -81,7 +81,7 @@ $ todo list
 
 Done todo
 
-```sh
+```sh-session
 $ todo done 0
 $ todo done 1
 $ todo done 2
@@ -95,7 +95,7 @@ $ todo list
 
 Record elapsed time
 
-```sh
+```sh-session
 $ todo record 0 0.1
 $ todo record 1 0.1
 $ todo record 2 0.5
@@ -109,7 +109,7 @@ $ todo list
 
 Report today's achievements
 
-```sh
+```sh-session
 $ todo report
 ## 2021/06/20 (0.7h)
 ### 進行中のタスク
@@ -128,7 +128,7 @@ $ todo report
 
 Continue todo list
 
-```sh
+```sh-session
 $ todo continue
 $ todo list
 ☐ 000: お水を一杯飲む
