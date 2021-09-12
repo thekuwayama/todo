@@ -27,8 +27,8 @@ const FILE_NAME: &str = ".todo";
 
 fn log_file_path() -> String {
     match env::var("HOME") {
-        Ok(val) => format!("{}/{}", val, FILE_NAME).to_string(),
-        Err(_) => format!("./{}", FILE_NAME).to_string(),
+        Ok(val) => [&val, FILE_NAME].join("/"),
+        Err(_) => format!("./{}", FILE_NAME),
     }
 }
 
@@ -109,7 +109,7 @@ fn main() {
         .read(true)
         .write(true)
         .open(&fp)
-        .expect(format!("failed to open the file {}", fp).as_str());
+        .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
     let mut reader = BufReader::new(r);
     match app.clone().get_matches().subcommand() {
         ("list", _) => {
@@ -118,11 +118,9 @@ fn main() {
                 process::exit(1);
             });
             println!("{}", result);
-            ()
         }
         ("clear", _) => {
             let _ = remove_file(&fp);
-            ()
         }
         ("add", Some(s)) => {
             let result = add::add(s.value_of("task").unwrap());
@@ -130,12 +128,11 @@ fn main() {
                 .create(true)
                 .append(true)
                 .open(&fp)
-                .expect(format!("failed to open the file {}", fp).as_str());
+                .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to add a task: {}", e);
                 process::exit(1);
             });
-            ()
         }
         ("delete", Some(i)) => {
             let result = delete::delete(
@@ -149,7 +146,7 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(&fp)
-                .expect(format!("failed to open the file {}", fp).as_str());
+                .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to delete a task: {}", e);
                 process::exit(1);
@@ -160,7 +157,6 @@ fn main() {
                     eprintln!("failed to delete a task: {}", e);
                     process::exit(1);
                 });
-            ()
         }
         ("edit", Some(it)) => {
             let result = edit::edit(
@@ -175,7 +171,7 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(&fp)
-                .expect(format!("failed to open the file {}", fp).as_str());
+                .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to edit task description: {}", e);
                 process::exit(1);
@@ -186,7 +182,6 @@ fn main() {
                     eprintln!("failed to edit task description: {}", e);
                     process::exit(1);
                 });
-            ()
         }
         ("done", Some(i)) => {
             let result = done::done(
@@ -200,12 +195,11 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(&fp)
-                .expect(format!("failed to open the file {}", fp).as_str());
+                .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to done a task: {}", e);
                 process::exit(1);
             });
-            ()
         }
         ("undone", Some(i)) => {
             let result = undone::undone(
@@ -219,12 +213,11 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(&fp)
-                .expect(format!("failed to open the file {}", fp).as_str());
+                .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to undone a task: {}", e);
                 process::exit(1);
             });
-            ()
         }
         ("record", Some(it)) => {
             let result = record::record(
@@ -239,12 +232,11 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(&fp)
-                .expect(format!("failed to open the file {}", fp).as_str());
+                .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to record time: {}", e);
                 process::exit(1);
             });
-            ()
         }
         ("unrecord", Some(i)) => {
             let result = unrecord::unrecord(
@@ -258,7 +250,7 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(&fp)
-                .expect(format!("failed to open the file {}", fp).as_str());
+                .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to unrecord time: {}", e);
                 process::exit(1);
@@ -269,7 +261,6 @@ fn main() {
                     eprintln!("failed to unrecord time: {}", e);
                     process::exit(1);
                 });
-            ()
         }
         ("swap", Some(ii)) => {
             let result = swap::swap(
@@ -284,19 +275,18 @@ fn main() {
             let mut writer = OpenOptions::new()
                 .write(true)
                 .open(&fp)
-                .expect(format!("failed to open the file {}", fp).as_str());
+                .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to swap tasks: {}", e);
                 process::exit(1);
             });
-            ()
         }
         ("report", Some(cd)) => {
+            let date = Local::today().format("%Y/%m/%d").to_string();
             let result = report::report(
                 &mut reader,
                 cd.value_of("comment").unwrap_or(""),
-                cd.value_of("date")
-                    .unwrap_or(Local::today().format("%Y/%m/%d").to_string().as_str()),
+                cd.value_of("date").unwrap_or(&date),
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to report today's achievements: {}", e);
@@ -317,7 +307,7 @@ fn main() {
                 .create(true)
                 .write(true)
                 .open(&fp)
-                .expect(format!("failed to open the file {}", fp).as_str());
+                .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
             writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
                 eprintln!("failed to continue todo list: {}", e);
                 process::exit(1);
@@ -328,7 +318,6 @@ fn main() {
                     eprintln!("failed to continue todo list: {}", e);
                     process::exit(1);
                 });
-            ()
         }
         ("uncontinue", _) => {
             if Path::new(bp.as_str()).exists() {
@@ -337,11 +326,10 @@ fn main() {
                     process::exit(1);
                 });
             }
-            ()
         }
         _ => {
             let _ = app.to_owned().print_help();
-            println!("")
+            println!()
         }
     };
 }

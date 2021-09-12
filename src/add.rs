@@ -1,5 +1,5 @@
 pub fn add(s: &str) -> String {
-    format!("[ ] {} ()\n", s).to_string()
+    format!("[ ] {} ()\n", s)
 }
 
 #[cfg(test)]

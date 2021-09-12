@@ -15,7 +15,7 @@ pub fn done<R: BufRead>(
     while reader.read_line(&mut l)? > 0 {
         let caps = re
             .captures(l.as_str())
-            .ok_or(Error::new(ErrorKind::InvalidInput, "format error"))?;
+            .ok_or_else(|| Error::new(ErrorKind::InvalidInput, "format error"))?;
         if index == i {
             let s = caps.get(2).map_or("", |m| m.as_str());
             let t = caps.get(3).map_or("", |m| m.as_str());
