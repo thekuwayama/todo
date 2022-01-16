@@ -15,7 +15,7 @@ mod unrecord;
 mod utils;
 
 use chrono::offset::Local;
-use clap::{App, Arg, SubCommand};
+use clap::{arg, crate_name, App, AppSettings};
 use std::env;
 use std::fs::{remove_file, rename, OpenOptions};
 use std::io::prelude::*;
@@ -32,76 +32,67 @@ fn log_file_path() -> String {
     }
 }
 
-fn main() {
-    let app = App::new(crate_name!())
+fn build_cli() -> App<'static> {
+    App::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
-        .subcommand(SubCommand::with_name("list").about("show todo list"))
-        .subcommand(SubCommand::with_name("clear").about("clear todo list"))
+        .setting(AppSettings::SubcommandRequiredElseHelp)
+        .subcommand(App::new("list").about("show todo list"))
+        .subcommand(App::new("clear").about("clear todo list"))
         .subcommand(
-            SubCommand::with_name("add")
+            App::new("add")
                 .about("add the task")
-                .arg(Arg::with_name("task").required(true)),
+                .arg(arg!(<TASK>).required(true)),
         )
         .subcommand(
-            SubCommand::with_name("delete")
+            App::new("delete")
                 .about("delete the task")
-                .arg(Arg::with_name("index").required(true)),
+                .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(
-            SubCommand::with_name("edit")
+            App::new("edit")
                 .about("edit the task description")
-                .args(&[
-                    Arg::with_name("index").required(true),
-                    Arg::with_name("task").required(true),
-                ]),
+                .arg(arg!(<INDEX>).required(true))
+                .arg(arg!(<TASK>).required(true)),
         )
         .subcommand(
-            SubCommand::with_name("done")
+            App::new("done")
                 .about("done the task")
-                .arg(Arg::with_name("index").required(true)),
+                .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(
-            SubCommand::with_name("undone")
+            App::new("undone")
                 .about("undone the task")
-                .arg(Arg::with_name("index").required(true)),
+                .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(
-            SubCommand::with_name("record")
+            App::new("record")
                 .about("record elapsed time")
-                .args(&[
-                    Arg::with_name("index").required(true),
-                    Arg::with_name("time").required(true),
-                ]),
+                .arg(arg!(<INDEX>).required(true))
+                .arg(arg!(<TIME>).required(true)),
         )
         .subcommand(
-            SubCommand::with_name("unrecord")
+            App::new("unrecord")
                 .about("unrecord elapsed time")
-                .arg(Arg::with_name("index").required(true)),
+                .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(
-            SubCommand::with_name("swap")
+            App::new("swap")
                 .about("swap two tasks")
-                .args(&[
-                    Arg::with_name("index1").required(true),
-                    Arg::with_name("index2").required(true),
-                ]),
+                .arg(arg!(<INDEX1>).required(true))
+                .arg(arg!(<INDEX2>).required(true)),
         )
         .subcommand(
-            SubCommand::with_name("report")
+            App::new("report")
                 .about("report today's achievements")
-                .arg(Arg::with_name("comment").value_name("COMMENT"))
-                .arg(
-                    Arg::with_name("date")
-                        .short("d")
-                        .long("date")
-                        .takes_value(true)
-                        .value_name("DATE"),
-                ),
+                .arg(arg!(<COMMENT>).required(false))
+                .arg(arg!(<TITLE>).required(false)),
         )
-        .subcommand(SubCommand::with_name("continue").about("continue todo list"))
-        .subcommand(SubCommand::with_name("uncontinue").about("uncontinue todo list"));
+        .subcommand(App::new("continue").about("continue todo list"))
+        .subcommand(App::new("uncontinue").about("uncontinue todo list"))
+}
 
+fn main() {
     let fp = log_file_path();
     let bp = format!("{}.backup", fp);
     let r = OpenOptions::new()
@@ -111,7 +102,7 @@ fn main() {
         .open(&fp)
         .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
     let mut reader = BufReader::new(r);
-    match app.clone().get_matches().subcommand() {
+    match build_cli().get_matches().subcommand().unwrap() {
         ("list", _) => {
             let result = list::list(&mut reader).unwrap_or_else(|e| {
                 eprintln!("failed to show todo list: {}", e);
@@ -122,8 +113,8 @@ fn main() {
         ("clear", _) => {
             let _ = remove_file(&fp);
         }
-        ("add", Some(s)) => {
-            let result = add::add(s.value_of("task").unwrap());
+        ("add", s) => {
+            let result = add::add(s.value_of("TASK").unwrap());
             let mut writer = OpenOptions::new()
                 .create(true)
                 .append(true)
@@ -134,10 +125,16 @@ fn main() {
                 process::exit(1);
             });
         }
-        ("delete", Some(i)) => {
+        ("delete", i) => {
             let result = delete::delete(
                 &mut reader,
-                i.value_of("index").unwrap().parse::<u32>().unwrap(),
+                i.value_of("INDEX")
+                    .unwrap()
+                    .parse::<u32>()
+                    .unwrap_or_else(|_| {
+                        eprintln!("failed, <INDEX> should be integer");
+                        process::exit(1);
+                    }),
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to delete a task: {}", e);
@@ -158,11 +155,17 @@ fn main() {
                     process::exit(1);
                 });
         }
-        ("edit", Some(it)) => {
+        ("edit", it) => {
             let result = edit::edit(
                 &mut reader,
-                it.value_of("index").unwrap().parse::<u32>().unwrap(),
-                it.value_of("task").unwrap(),
+                it.value_of("INDEX")
+                    .unwrap()
+                    .parse::<u32>()
+                    .unwrap_or_else(|_| {
+                        eprintln!("failed, <INDEX> should be integer");
+                        process::exit(1);
+                    }),
+                it.value_of("TASK").unwrap(),
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to edit task description: {}", e);
@@ -183,10 +186,16 @@ fn main() {
                     process::exit(1);
                 });
         }
-        ("done", Some(i)) => {
+        ("done", i) => {
             let result = done::done(
                 &mut reader,
-                i.value_of("index").unwrap().parse::<u32>().unwrap(),
+                i.value_of("INDEX")
+                    .unwrap()
+                    .parse::<u32>()
+                    .unwrap_or_else(|_| {
+                        eprintln!("failed, <INDEX> should be integer");
+                        process::exit(1);
+                    }),
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to done a task: {}", e);
@@ -201,10 +210,16 @@ fn main() {
                 process::exit(1);
             });
         }
-        ("undone", Some(i)) => {
+        ("undone", i) => {
             let result = undone::undone(
                 &mut reader,
-                i.value_of("index").unwrap().parse::<u32>().unwrap(),
+                i.value_of("INDEX")
+                    .unwrap()
+                    .parse::<u32>()
+                    .unwrap_or_else(|_| {
+                        eprintln!("failed, <INDEX> should be integer");
+                        process::exit(1);
+                    }),
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to undone a task: {}", e);
@@ -219,11 +234,23 @@ fn main() {
                 process::exit(1);
             });
         }
-        ("record", Some(it)) => {
+        ("record", it) => {
             let result = record::record(
                 &mut reader,
-                it.value_of("index").unwrap().parse::<u32>().unwrap(),
-                it.value_of("time").unwrap().parse::<f32>().unwrap(),
+                it.value_of("INDEX")
+                    .unwrap()
+                    .parse::<u32>()
+                    .unwrap_or_else(|_| {
+                        eprintln!("failed, <INDEX> should be integer");
+                        process::exit(1);
+                    }),
+                it.value_of("TIME")
+                    .unwrap()
+                    .parse::<f32>()
+                    .unwrap_or_else(|_| {
+                        eprintln!("failed, <TIME> should be float");
+                        process::exit(1);
+                    }),
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to record time: {}", e);
@@ -238,10 +265,16 @@ fn main() {
                 process::exit(1);
             });
         }
-        ("unrecord", Some(i)) => {
+        ("unrecord", i) => {
             let result = unrecord::unrecord(
                 &mut reader,
-                i.value_of("index").unwrap().parse::<u32>().unwrap(),
+                i.value_of("INDEX")
+                    .unwrap()
+                    .parse::<u32>()
+                    .unwrap_or_else(|_| {
+                        eprintln!("failed, <INDEX> should be integer");
+                        process::exit(1);
+                    }),
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to unrecord time: {}", e);
@@ -262,11 +295,23 @@ fn main() {
                     process::exit(1);
                 });
         }
-        ("swap", Some(ii)) => {
+        ("swap", ii) => {
             let result = swap::swap(
                 &mut reader,
-                ii.value_of("index1").unwrap().parse::<u32>().unwrap(),
-                ii.value_of("index2").unwrap().parse::<u32>().unwrap(),
+                ii.value_of("INDEX1")
+                    .unwrap()
+                    .parse::<u32>()
+                    .unwrap_or_else(|_| {
+                        eprintln!("failed, <INDEX1> should be integer");
+                        process::exit(1);
+                    }),
+                ii.value_of("INDEX2")
+                    .unwrap()
+                    .parse::<u32>()
+                    .unwrap_or_else(|_| {
+                        eprintln!("failed, <INDEX2> should be integer");
+                        process::exit(1);
+                    }),
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to swap tasks: {}", e);
@@ -281,12 +326,12 @@ fn main() {
                 process::exit(1);
             });
         }
-        ("report", Some(cd)) => {
+        ("report", cd) => {
             let date = Local::today().format("%Y/%m/%d").to_string();
             let result = report::report(
                 &mut reader,
-                cd.value_of("comment").unwrap_or(""),
-                cd.value_of("date").unwrap_or(&date),
+                cd.value_of("COMMENT").unwrap_or(""),
+                cd.value_of("TITLE").unwrap_or(&date),
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to report today's achievements: {}", e);
@@ -327,9 +372,6 @@ fn main() {
                 });
             }
         }
-        _ => {
-            let _ = app.to_owned().print_help();
-            println!()
-        }
+        _ => unreachable!(),
     };
 }

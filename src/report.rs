@@ -6,7 +6,7 @@ use crate::utils;
 pub fn report<R: BufRead>(
     reader: &mut R,
     comment: &str,
-    date: &str,
+    title: &str,
 ) -> Result<String, Box<dyn error::Error + Send + Sync + 'static>> {
     let re = utils::re();
     let mut doings = String::new();
@@ -50,7 +50,7 @@ pub fn report<R: BufRead>(
          {}\n\
          ### メモ、ぼやき\n\
          {}\n",
-        date, elapsed, doings, dones, todos, comment
+        title, elapsed, doings, dones, todos, comment
     ))
 }
 
