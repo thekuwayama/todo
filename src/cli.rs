@@ -1,6 +1,6 @@
 use clap::{arg, crate_description, crate_name, crate_version, App, AppSettings};
 
-pub fn build_cli() -> App<'static> {
+pub fn build() -> App<'static> {
     App::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())

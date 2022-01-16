@@ -39,7 +39,7 @@ fn main() {
         .open(&fp)
         .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
     let mut reader = BufReader::new(r);
-    match cli::build_cli().get_matches().subcommand().unwrap() {
+    match cli::build().get_matches().subcommand().unwrap() {
         ("list", _) => {
             let result = list::list(&mut reader).unwrap_or_else(|e| {
                 eprintln!("failed to show todo list: {}", e);
