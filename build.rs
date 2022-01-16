@@ -4,7 +4,7 @@ use clap_complete::{generate_to, shells};
 
 include!("src/cli.rs");
 
-const COMPLETION_FILE_NAME: &str = "todo-completion";
+const COMPLETION_FILE_NAME: &str = "todo";
 
 fn main() {
     let mut app = build();
