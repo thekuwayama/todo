@@ -1,14 +1,15 @@
-use std::error;
+use std::process;
 
 use clap_complete::{generate_to, shells};
 
 include!("src/cli.rs");
 
-const COMPLETION_FILENAME: &str = "todo-completion";
+const COMPLETION_FILE_NAME: &str = "todo-completion";
 
-fn main() -> Result<(), Box<dyn error::Error + Send + Sync + 'static>> {
+fn main() {
     let mut app = build();
-    let _ = generate_to(shells::Bash, &mut app, COMPLETION_FILENAME, ".")?;
-
-    Ok(())
+    let _ = generate_to(shells::Bash, &mut app, COMPLETION_FILE_NAME, ".").unwrap_or_else(|e| {
+        eprintln!("failed to generate {}.bash: {}", COMPLETION_FILE_NAME, e);
+        process::exit(1);
+    });
 }
