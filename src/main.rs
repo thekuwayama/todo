@@ -1,7 +1,5 @@
-#[macro_use]
-extern crate clap;
-
 mod add;
+mod cli;
 mod r#continue;
 mod delete;
 mod done;
@@ -15,7 +13,6 @@ mod unrecord;
 mod utils;
 
 use chrono::offset::Local;
-use clap::{arg, crate_name, App, AppSettings};
 use std::env;
 use std::fs::{remove_file, rename, OpenOptions};
 use std::io::prelude::*;
@@ -32,66 +29,6 @@ fn log_file_path() -> String {
     }
 }
 
-fn build_cli() -> App<'static> {
-    App::new(crate_name!())
-        .version(crate_version!())
-        .about(crate_description!())
-        .setting(AppSettings::SubcommandRequiredElseHelp)
-        .subcommand(App::new("list").about("show todo list"))
-        .subcommand(App::new("clear").about("clear todo list"))
-        .subcommand(
-            App::new("add")
-                .about("add the task")
-                .arg(arg!(<TASK>).required(true)),
-        )
-        .subcommand(
-            App::new("delete")
-                .about("delete the task")
-                .arg(arg!(<INDEX>).required(true)),
-        )
-        .subcommand(
-            App::new("edit")
-                .about("edit the task description")
-                .arg(arg!(<INDEX>).required(true))
-                .arg(arg!(<TASK>).required(true)),
-        )
-        .subcommand(
-            App::new("done")
-                .about("done the task")
-                .arg(arg!(<INDEX>).required(true)),
-        )
-        .subcommand(
-            App::new("undone")
-                .about("undone the task")
-                .arg(arg!(<INDEX>).required(true)),
-        )
-        .subcommand(
-            App::new("record")
-                .about("record elapsed time")
-                .arg(arg!(<INDEX>).required(true))
-                .arg(arg!(<TIME>).required(true)),
-        )
-        .subcommand(
-            App::new("unrecord")
-                .about("unrecord elapsed time")
-                .arg(arg!(<INDEX>).required(true)),
-        )
-        .subcommand(
-            App::new("swap")
-                .about("swap two tasks")
-                .arg(arg!(<INDEX1>).required(true))
-                .arg(arg!(<INDEX2>).required(true)),
-        )
-        .subcommand(
-            App::new("report")
-                .about("report today's achievements")
-                .arg(arg!(<COMMENT>).required(false))
-                .arg(arg!(<TITLE>).required(false)),
-        )
-        .subcommand(App::new("continue").about("continue todo list"))
-        .subcommand(App::new("uncontinue").about("uncontinue todo list"))
-}
-
 fn main() {
     let fp = log_file_path();
     let bp = format!("{}.backup", fp);
@@ -102,7 +39,7 @@ fn main() {
         .open(&fp)
         .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
     let mut reader = BufReader::new(r);
-    match build_cli().get_matches().subcommand().unwrap() {
+    match cli::build_cli().get_matches().subcommand().unwrap() {
         ("list", _) => {
             let result = list::list(&mut reader).unwrap_or_else(|e| {
                 eprintln!("failed to show todo list: {}", e);

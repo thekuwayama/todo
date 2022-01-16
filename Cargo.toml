@@ -3,11 +3,11 @@ name = "todo"
 version = "0.1.0"
 authors = ["thekuwayama <thekuwayama@gmail.com>"]
 description = "simple command-line todo list"
-edition = "2018"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+chrono = { version = "0.4", features = ["unstable-locales"] }
 clap = { version = "3.0", features = ["cargo"] }
 regex = "1.4"
-chrono = { version = "0.4", features = ["unstable-locales"] }
