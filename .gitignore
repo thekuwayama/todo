@@ -3,4 +3,3 @@ Cargo.lock
 **/*.rs.bk
 .todo
 .todo.backup
-todo.bash

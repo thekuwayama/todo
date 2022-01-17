@@ -135,6 +135,15 @@ $ todo list
 ```
 
 
+## Shell Completion
+
+You can load the file to do the bash completion.
+
+```sh-session
+$ source todo.bash
+```
+
+
 ## Note
 
 `todo` is inspired by:
