@@ -11,10 +11,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: docker://rust:1.57.0
     steps:
     - uses: actions/checkout@v2
     - name: Lint
-      run: cargo clippy
+      run: |-
+        rustup component add clippy
+        cargo clippy
     - name: Build
       run: cargo build --verbose
     - name: Run tests
