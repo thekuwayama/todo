@@ -134,7 +134,7 @@ mod tests {
     use std::io::BufReader;
 
     #[test]
-    fn test_report() {
+    fn test_report_ja() {
         let mut reader = BufReader::new(
             "[x] first ()\n\
              [x] second (2.0)\n\
@@ -156,6 +156,60 @@ mod tests {
              - third\n\
              \n\
              ### メモ、ぼやき\n\
+             test\n",
+        );
+    }
+
+    #[test]
+    fn test_report_en() {
+        let mut reader = BufReader::new(
+            "[x] first ()\n\
+             [x] second (2.0)\n\
+             [ ] third ()\n\
+             [ ] fourth (4.0)\n"
+                .as_bytes(),
+        );
+        assert_eq!(
+            report(&mut reader, "test", "2020/01/22", &Language::En).unwrap(),
+            "## 2020/01/22 (6.0h)\n\
+             ### Doing tasks\n\
+             - fourth (4.0h)\n\
+             \n\
+             ### Done tasks\n\
+             - first\n\
+             - second (2.0h)\n\
+             \n\
+             ### Todo tasks in this week (On Friday, next week scheduled tasks)\n\
+             - third\n\
+             \n\
+             ### Memo & Comments\n\
+             test\n",
+        );
+    }
+
+    #[test]
+    fn test_report_zh() {
+        let mut reader = BufReader::new(
+            "[x] first ()\n\
+             [x] second (2.0)\n\
+             [ ] third ()\n\
+             [ ] fourth (4.0)\n"
+                .as_bytes(),
+        );
+        assert_eq!(
+            report(&mut reader, "test", "2020/01/22", &Language::Zh).unwrap(),
+            "## 2020/01/22 (6.0h)\n\
+             ### 进行中的任务\n\
+             - fourth (4.0h)\n\
+             \n\
+             ### 已完成的任务\n\
+             - first\n\
+             - second (2.0h)\n\
+             \n\
+             ### 本周计划支持的其他任务（下周周五支持）\n\
+             - third\n\
+             \n\
+             ### 备忘\n\
              test\n",
         );
     }
