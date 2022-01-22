@@ -98,7 +98,10 @@ pub fn build() -> App<'static> {
                 .arg(arg!(<TITLE>).required(false))
                 .arg(
                     arg!(<LANG>)
+                        .long("lang")
+                        .short('l')
                         .default_value("ja")
+                        .takes_value(true)
                         .possible_values(Language::possible_values())
                         .required(false),
                 ),
