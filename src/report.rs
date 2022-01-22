@@ -43,7 +43,7 @@ static ZH: Lazy<HashMap<ReportKey, &str>> = Lazy::new(|| {
     HashMap::from([
         (ReportKey::Doing, "进行中的任务"),
         (ReportKey::Done, "已完成的任务"),
-        (ReportKey::Todo, "本周计划支持的其他任务（下周周五支持）"),
+        (ReportKey::Todo, "本周的任务（周五，下周安排的任务）"),
         (ReportKey::Comment, "备忘"),
     ])
 });
@@ -194,7 +194,7 @@ mod tests {
              - first\n\
              - second (2.0h)\n\
              \n\
-             ### 本周计划支持的其他任务（下周周五支持）\n\
+             ### 本周的任务（周五，下周安排的任务）\n\
              - third\n\
              \n\
              ### 备忘\n\
