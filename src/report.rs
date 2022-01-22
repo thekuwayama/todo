@@ -133,15 +133,15 @@ mod tests {
     use super::*;
     use std::io::BufReader;
 
+    static INPUT: &[u8] = "[x] first ()\n\
+         [x] second (2.0)\n\
+         [ ] third ()\n\
+         [ ] fourth (4.0)\n"
+        .as_bytes();
+
     #[test]
     fn test_report_ja() {
-        let mut reader = BufReader::new(
-            "[x] first ()\n\
-             [x] second (2.0)\n\
-             [ ] third ()\n\
-             [ ] fourth (4.0)\n"
-                .as_bytes(),
-        );
+        let mut reader = BufReader::new(INPUT);
         assert_eq!(
             report(&mut reader, "test", "2020/01/22", &Language::Ja).unwrap(),
             "## 2020/01/22 (6.0h)\n\
@@ -162,13 +162,7 @@ mod tests {
 
     #[test]
     fn test_report_en() {
-        let mut reader = BufReader::new(
-            "[x] first ()\n\
-             [x] second (2.0)\n\
-             [ ] third ()\n\
-             [ ] fourth (4.0)\n"
-                .as_bytes(),
-        );
+        let mut reader = BufReader::new(INPUT);
         assert_eq!(
             report(&mut reader, "test", "2020/01/22", &Language::En).unwrap(),
             "## 2020/01/22 (6.0h)\n\
@@ -189,13 +183,7 @@ mod tests {
 
     #[test]
     fn test_report_zh() {
-        let mut reader = BufReader::new(
-            "[x] first ()\n\
-             [x] second (2.0)\n\
-             [ ] third ()\n\
-             [ ] fourth (4.0)\n"
-                .as_bytes(),
-        );
+        let mut reader = BufReader::new(INPUT);
         assert_eq!(
             report(&mut reader, "test", "2020/01/22", &Language::Zh).unwrap(),
             "## 2020/01/22 (6.0h)\n\
