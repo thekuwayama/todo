@@ -12,13 +12,17 @@ mod undone;
 mod unrecord;
 mod utils;
 
-use chrono::offset::Local;
 use std::env;
 use std::fs::{remove_file, rename, OpenOptions};
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::Path;
 use std::process;
+use std::str::FromStr;
+
+use chrono::offset::Local;
+
+use crate::cli::Language;
 
 const FILE_NAME: &str = ".todo";
 
@@ -265,11 +269,12 @@ fn main() {
         }
         ("report", cdl) => {
             let date = Local::today().format("%Y/%m/%d").to_string();
+            let lang = Language::from_str(cdl.value_of("LANG").unwrap_or("ja")).unwrap();
             let result = report::report(
                 &mut reader,
                 cdl.value_of("COMMENT").unwrap_or(""),
                 cdl.value_of("TITLE").unwrap_or(&date),
-                cdl.value_of("LANG").unwrap_or("ja"),
+                &lang,
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to report today's achievements: {}", e);

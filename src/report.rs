@@ -4,6 +4,7 @@ use std::io::{BufRead, Error, ErrorKind};
 
 use once_cell::sync::Lazy;
 
+use crate::cli::Language;
 use crate::utils;
 
 #[derive(Debug, Hash, Eq, PartialEq)]
@@ -51,7 +52,7 @@ pub fn report<R: BufRead>(
     reader: &mut R,
     comment: &str,
     title: &str,
-    lang: &str,
+    lang: &Language,
 ) -> Result<String, Box<dyn error::Error + Send + Sync + 'static>> {
     let re = utils::re();
     let mut doings = String::new();
@@ -86,10 +87,9 @@ pub fn report<R: BufRead>(
     }
 
     let desc = match lang {
-        "ja" => &JA,
-        "en" => &EN,
-        "zh" => &ZH,
-        &_ => &JA,
+        &Language::Ja => &JA,
+        &Language::En => &EN,
+        &Language::Zh => &ZH,
     };
     Ok(do_report(
         title, elapsed, &doings, &dones, &todos, comment, desc,
@@ -143,7 +143,7 @@ mod tests {
                 .as_bytes(),
         );
         assert_eq!(
-            report(&mut reader, "test", "2020/01/22", "ja").unwrap(),
+            report(&mut reader, "test", "2020/01/22", &Language::Ja).unwrap(),
             "## 2020/01/22 (6.0h)\n\
              ### 進行中のタスク\n\
              - fourth (4.0h)\n\

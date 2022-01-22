@@ -2,12 +2,11 @@ use std::fmt::Display;
 use std::str::FromStr;
 
 use clap::{
-    self, arg, crate_description, crate_name, crate_version, App, AppSettings, ArgEnum,
-    PossibleValue,
+    arg, crate_description, crate_name, crate_version, App, AppSettings, ArgEnum, PossibleValue,
 };
 
 #[derive(ArgEnum, Clone, Copy)]
-pub(crate) enum Language {
+pub enum Language {
     Ja,
     En,
     Zh,
