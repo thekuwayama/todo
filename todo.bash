@@ -201,12 +201,20 @@ _todo() {
             return 0
             ;;
         todo__report)
-            opts="-h --help <COMMENT> <TITLE>"
+            opts="-l -h --lang --help <COMMENT> <TITLE>"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
+                --lang)
+                    COMPREPLY=($(compgen -W "ja en zh" -- "${cur}"))
+                    return 0
+                    ;;
+                -l)
+                    COMPREPLY=($(compgen -W "ja en zh" -- "${cur}"))
+                    return 0
+                    ;;
                 *)
                     COMPREPLY=()
                     ;;
