@@ -263,12 +263,13 @@ fn main() {
                 process::exit(1);
             });
         }
-        ("report", cd) => {
+        ("report", cdl) => {
             let date = Local::today().format("%Y/%m/%d").to_string();
             let result = report::report(
                 &mut reader,
-                cd.value_of("COMMENT").unwrap_or(""),
-                cd.value_of("TITLE").unwrap_or(&date),
+                cdl.value_of("COMMENT").unwrap_or(""),
+                cdl.value_of("TITLE").unwrap_or(&date),
+                cdl.value_of("LANG").unwrap_or("ja"),
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to report today's achievements: {}", e);
