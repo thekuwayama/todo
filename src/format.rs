@@ -5,6 +5,7 @@ use nom::character::complete::{anychar, char, one_of};
 use nom::combinator::opt;
 use nom::multi::many_till;
 use nom::number::complete::float;
+use nom::sequence::terminated;
 use nom::IResult;
 
 const TODO: &str = "\u{2610}";
@@ -34,7 +35,7 @@ fn time(s: &str) -> IResult<&str, Option<f32>> {
 
 fn todo(s: &str) -> IResult<&str, Todo> {
     let (s, done) = done(s)?;
-    let (s, (task, time)) = many_till(anychar, time)(s)?;
+    let (s, (task, time)) = many_till(anychar, terminated(time, opt(char('\n'))))(s)?;
     let todo = Todo {
         done,
         task: task.iter().collect::<String>().trim().to_string(),
@@ -64,7 +65,7 @@ impl Todo {
                 )));
             }
         };
-        if !s.is_empty() && s != "\n" {
+        if !s.is_empty() {
             return Err(Box::new(Error::new(
                 ErrorKind::InvalidInput,
                 "failed to parse",
