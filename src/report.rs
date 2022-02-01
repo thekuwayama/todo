@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 use std::error;
-use std::io::{BufRead, Error, ErrorKind};
+use std::io::BufRead;
 
 use once_cell::sync::Lazy;
 
 use crate::cli::Language;
-use crate::utils;
+use crate::format::Todo;
 
 #[derive(Debug, Hash, Eq, PartialEq)]
 enum ReportKey {
@@ -48,13 +48,12 @@ static ZH: Lazy<HashMap<ReportKey, &str>> = Lazy::new(|| {
     ])
 });
 
-pub fn report<R: BufRead>(
+pub(crate) fn report<R: BufRead>(
     reader: &mut R,
     comment: &str,
     title: &str,
     lang: &Language,
 ) -> Result<String, Box<dyn error::Error + Send + Sync + 'static>> {
-    let re = utils::re();
     let mut doings = String::new();
     let mut dones = String::new();
     let mut todos = String::new();
@@ -62,34 +61,26 @@ pub fn report<R: BufRead>(
 
     let mut l = String::new();
     while reader.read_line(&mut l)? > 0 {
-        let caps = re
-            .captures(l.as_str())
-            .ok_or_else(|| Error::new(ErrorKind::InvalidInput, "format error"))?;
-        match (
-            caps.get(1).map_or("", |m| m.as_str()),
-            caps.get(2).map_or("", |m| m.as_str()),
-            caps.get(3).map_or("", |m| m.as_str()),
-        ) {
-            ("[x]", s, "") => dones.push_str(format!("- {}\n", s).as_str()),
-            ("[x]", s, t) => {
-                dones.push_str(format!("- {} ({}h)\n", s, t).as_str());
-                elapsed += t.parse::<f32>()?;
-            }
-            ("[ ]", s, "") => todos.push_str(format!("- {}\n", s).as_str()),
-            ("[ ]", s, t) => {
-                doings.push_str(format!("- {} ({}h)\n", s, t).as_str());
-                elapsed += t.parse::<f32>()?;
-            }
-            _ => (),
-        };
+        let todo = Todo::deserialize(l.as_str())?;
+        if todo.done && todo.time.is_some() {
+            elapsed += todo.time.unwrap_or(0.0);
+            dones.push_str(todo.report_string().as_str());
+        } else if todo.done {
+            dones.push_str(todo.report_string().as_str());
+        } else if todo.time.is_some() {
+            elapsed += todo.time.unwrap_or(0.0);
+            doings.push_str(todo.report_string().as_str());
+        } else {
+            todos.push_str(todo.report_string().as_str());
+        }
 
         l.clear();
     }
 
-    let desc = match lang {
-        &Language::Ja => &JA,
-        &Language::En => &EN,
-        &Language::Zh => &ZH,
+    let desc = match *lang {
+        Language::Ja => &JA,
+        Language::En => &EN,
+        Language::Zh => &ZH,
     };
     Ok(do_report(
         title, elapsed, &doings, &dones, &todos, comment, desc,

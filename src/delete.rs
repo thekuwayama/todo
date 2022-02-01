@@ -1,7 +1,7 @@
 use std::error;
 use std::io::{BufRead, Error, ErrorKind};
 
-pub fn delete<R: BufRead>(
+pub(crate) fn delete<R: BufRead>(
     reader: &mut R,
     i: u32,
 ) -> Result<String, Box<dyn error::Error + Send + Sync + 'static>> {

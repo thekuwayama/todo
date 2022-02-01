@@ -1,27 +1,20 @@
 use std::error;
-use std::io::{BufRead, Error, ErrorKind};
+use std::io::BufRead;
 
-use crate::utils;
+use crate::format::Todo;
 
-pub fn r#continue<R: BufRead>(
+pub(crate) fn r#continue<R: BufRead>(
     reader: &mut R,
 ) -> Result<String, Box<dyn error::Error + Send + Sync + 'static>> {
-    let re = utils::re();
     let mut w = String::new();
 
     let mut l = String::new();
     while reader.read_line(&mut l)? > 0 {
-        let caps = re
-            .captures(l.as_str())
-            .ok_or_else(|| Error::new(ErrorKind::InvalidInput, "format error"))?;
-        match (
-            caps.get(1).map_or("", |m| m.as_str()),
-            caps.get(2).map_or("", |m| m.as_str()),
-        ) {
-            ("[x]", _) => (),
-            ("[ ]", s) => w.push_str(format!("[ ] {} ()\n", s).as_str()),
-            _ => (),
-        };
+        let mut todo = Todo::deserialize(l.as_str())?;
+        if !todo.done {
+            todo.time = None;
+            w.push_str(todo.serialize().as_str());
+        }
 
         l.clear();
     }

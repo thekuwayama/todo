@@ -2,7 +2,7 @@ use std::cmp::{max, min};
 use std::error;
 use std::io::{BufRead, Error, ErrorKind};
 
-pub fn swap<R: BufRead>(
+pub(crate) fn swap<R: BufRead>(
     reader: &mut R,
     i1: u32,
     i2: u32,
