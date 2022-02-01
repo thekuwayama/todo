@@ -32,7 +32,14 @@ fn time(s: &str) -> IResult<&str, Option<f32>> {
 fn todo(s: &str) -> IResult<&str, Todo> {
     let (s, done) = done(s)?;
     let (s, (task, time)) = many_till(anychar, terminated(time, opt(char('\n'))))(s)?;
-    let task = (&task[1..task.len() - 1]).iter().collect();
+    let mut task = task;
+    if task.pop() != Some(' ') || task.remove(0) != ' ' {
+        return Err(nom::Err::Error(nom::error::Error::new(
+            "failed to parse",
+            nom::error::ErrorKind::Char,
+        )));
+    }
+    let task = task.iter().collect();
     let todo = Todo { done, task, time };
 
     Ok((s, todo))
