@@ -1,5 +1,12 @@
+use crate::format::Todo;
+
 pub fn add(s: &str) -> String {
-    format!("[ ] {} ()\n", s)
+    Todo {
+        done: false,
+        task: s.to_string(),
+        time: None,
+    }
+    .serialize()
 }
 
 #[cfg(test)]

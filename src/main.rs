@@ -4,13 +4,13 @@ mod r#continue;
 mod delete;
 mod done;
 mod edit;
+mod format;
 mod list;
 mod record;
 mod report;
 mod swap;
 mod undone;
 mod unrecord;
-mod utils;
 
 use std::env;
 use std::fs::{remove_file, rename, OpenOptions};
