@@ -36,9 +36,10 @@ fn time(s: &str) -> IResult<&str, Option<f32>> {
 fn todo(s: &str) -> IResult<&str, Todo> {
     let (s, done) = done(s)?;
     let (s, (task, time)) = many_till(anychar, terminated(time, opt(char('\n'))))(s)?;
+    let task = &task[1..task.len() - 1];
     let todo = Todo {
         done,
-        task: task.iter().collect::<String>().trim().to_string(),
+        task: task.iter().collect(),
         time,
     };
 
