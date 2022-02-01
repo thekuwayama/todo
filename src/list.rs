@@ -3,7 +3,7 @@ use std::io::BufRead;
 
 use crate::format::Todo;
 
-pub fn list<R: BufRead>(
+pub(crate) fn list<R: BufRead>(
     reader: &mut R,
 ) -> Result<String, Box<dyn error::Error + Send + Sync + 'static>> {
     let mut w = String::new();

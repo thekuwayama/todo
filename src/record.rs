@@ -3,7 +3,7 @@ use std::io::{BufRead, Error, ErrorKind};
 
 use crate::format::Todo;
 
-pub fn record<R: BufRead>(
+pub(crate) fn record<R: BufRead>(
     reader: &mut R,
     i: u32,
     t: f32,

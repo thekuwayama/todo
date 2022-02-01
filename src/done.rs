@@ -3,7 +3,7 @@ use std::io::{BufRead, Error, ErrorKind};
 
 use crate::format::Todo;
 
-pub fn done<R: BufRead>(
+pub(crate) fn done<R: BufRead>(
     reader: &mut R,
     i: u32,
 ) -> Result<String, Box<dyn error::Error + Send + Sync + 'static>> {

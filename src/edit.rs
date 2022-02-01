@@ -3,7 +3,7 @@ use std::io::{BufRead, Error, ErrorKind};
 
 use crate::format::Todo;
 
-pub fn edit<R: BufRead>(
+pub(crate) fn edit<R: BufRead>(
     reader: &mut R,
     i: u32,
     s: &str,

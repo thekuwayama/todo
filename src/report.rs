@@ -48,7 +48,7 @@ static ZH: Lazy<HashMap<ReportKey, &str>> = Lazy::new(|| {
     ])
 });
 
-pub fn report<R: BufRead>(
+pub(crate) fn report<R: BufRead>(
     reader: &mut R,
     comment: &str,
     title: &str,

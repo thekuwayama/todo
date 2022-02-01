@@ -46,7 +46,7 @@ fn todo(s: &str) -> IResult<&str, Todo> {
 }
 
 impl Todo {
-    pub fn serialize(&self) -> String {
+    pub(crate) fn serialize(&self) -> String {
         format!(
             "[{}] {} ({})\n",
             if self.done { 'x' } else { ' ' },
@@ -55,7 +55,9 @@ impl Todo {
         )
     }
 
-    pub fn deserialize(s: &str) -> Result<Todo, Box<dyn error::Error + Send + Sync + 'static>> {
+    pub(crate) fn deserialize(
+        s: &str,
+    ) -> Result<Todo, Box<dyn error::Error + Send + Sync + 'static>> {
         let (s, todo) = match todo(s) {
             Ok((s, todo)) => (s, todo),
             _ => {
@@ -75,7 +77,7 @@ impl Todo {
         Ok(todo)
     }
 
-    pub fn list_string(&self, index: u32) -> String {
+    pub(crate) fn list_string(&self, index: u32) -> String {
         if self.done && self.time.is_some() {
             format!(
                 "{} {:03}: {} ({:.1})\n",
@@ -99,7 +101,7 @@ impl Todo {
         }
     }
 
-    pub fn report_string(&self) -> String {
+    pub(crate) fn report_string(&self) -> String {
         if self.done && self.time.is_some() {
             format!("- {} ({:.1}h)\n", self.task, self.time.unwrap_or(0.0))
         } else if self.done {

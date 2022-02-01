@@ -1,6 +1,6 @@
 use crate::format::Todo;
 
-pub fn add(s: &str) -> String {
+pub(crate) fn add(s: &str) -> String {
     Todo {
         done: false,
         task: s.to_string(),
