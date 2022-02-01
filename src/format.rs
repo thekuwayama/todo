@@ -5,7 +5,7 @@ use nom::character::complete::{anychar, char, one_of};
 use nom::combinator::opt;
 use nom::multi::many_till;
 use nom::number::complete::float;
-use nom::sequence::terminated;
+use nom::sequence::{delimited, terminated};
 use nom::IResult;
 
 const TODO: &str = "\u{2610}";
@@ -18,17 +18,13 @@ pub(crate) struct Todo {
 }
 
 fn done(s: &str) -> IResult<&str, bool> {
-    let (s, _) = char('[')(s)?;
-    let (s, done) = one_of("x ")(s)?;
-    let (s, _) = char(']')(s)?;
+    let (s, done) = delimited(char('['), one_of("x "), char(']'))(s)?;
 
     Ok((s, done == 'x'))
 }
 
 fn time(s: &str) -> IResult<&str, Option<f32>> {
-    let (s, _) = char('(')(s)?;
-    let (s, time) = opt(float)(s)?;
-    let (s, _) = char(')')(s)?;
+    let (s, time) = delimited(char('('), opt(float), char(')'))(s)?;
 
     Ok((s, time))
 }
@@ -36,12 +32,8 @@ fn time(s: &str) -> IResult<&str, Option<f32>> {
 fn todo(s: &str) -> IResult<&str, Todo> {
     let (s, done) = done(s)?;
     let (s, (task, time)) = many_till(anychar, terminated(time, opt(char('\n'))))(s)?;
-    let task = &task[1..task.len() - 1];
-    let todo = Todo {
-        done,
-        task: task.iter().collect(),
-        time,
-    };
+    let task = (&task[1..task.len() - 1]).iter().collect();
+    let todo = Todo { done, task, time };
 
     Ok((s, todo))
 }
