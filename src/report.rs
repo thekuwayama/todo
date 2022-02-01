@@ -48,6 +48,21 @@ static ZH: Lazy<HashMap<ReportKey, &str>> = Lazy::new(|| {
     ])
 });
 
+struct Report(Todo);
+impl Report {
+    fn serialize(&self) -> String {
+        if self.0.done && self.0.time.is_some() {
+            format!("- {} ({:.1}h)\n", self.0.task, self.0.time.unwrap_or(0.0))
+        } else if self.0.done {
+            format!("- {}\n", self.0.task)
+        } else if self.0.time.is_some() {
+            format!("- {} ({:.1}h)\n", self.0.task, self.0.time.unwrap_or(0.0))
+        } else {
+            format!("- {}\n", self.0.task)
+        }
+    }
+}
+
 pub(crate) fn report<R: BufRead>(
     reader: &mut R,
     comment: &str,
@@ -64,14 +79,14 @@ pub(crate) fn report<R: BufRead>(
         let todo = Todo::deserialize(l.as_str())?;
         if todo.done && todo.time.is_some() {
             elapsed += todo.time.unwrap_or(0.0);
-            dones.push_str(todo.report_string().as_str());
+            dones.push_str(Report(todo).serialize().as_str());
         } else if todo.done {
-            dones.push_str(todo.report_string().as_str());
+            dones.push_str(Report(todo).serialize().as_str());
         } else if todo.time.is_some() {
             elapsed += todo.time.unwrap_or(0.0);
-            doings.push_str(todo.report_string().as_str());
+            doings.push_str(Report(todo).serialize().as_str());
         } else {
-            todos.push_str(todo.report_string().as_str());
+            todos.push_str(Report(todo).serialize().as_str());
         }
 
         l.clear();

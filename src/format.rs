@@ -8,9 +8,6 @@ use nom::number::complete::float;
 use nom::sequence::{delimited, terminated};
 use nom::IResult;
 
-const TODO: &str = "\u{2610}";
-const DONE: &str = "\u{2611}";
-
 pub(crate) struct Todo {
     pub done: bool,
     pub task: String,
@@ -75,41 +72,5 @@ impl Todo {
         }
 
         Ok(todo)
-    }
-
-    pub(crate) fn list_string(&self, index: u32) -> String {
-        if self.done && self.time.is_some() {
-            format!(
-                "{} {:03}: {} ({:.1})\n",
-                DONE,
-                index,
-                self.task,
-                self.time.unwrap_or(0.0)
-            )
-        } else if self.done {
-            format!("{} {:03}: {}\n", DONE, index, self.task)
-        } else if !self.done && self.time.is_some() {
-            format!(
-                "{} {:03}: {} ({:.1})\n",
-                TODO,
-                index,
-                self.task,
-                self.time.unwrap_or(0.0)
-            )
-        } else {
-            format!("{} {:03}: {}\n", TODO, index, self.task)
-        }
-    }
-
-    pub(crate) fn report_string(&self) -> String {
-        if self.done && self.time.is_some() {
-            format!("- {} ({:.1}h)\n", self.task, self.time.unwrap_or(0.0))
-        } else if self.done {
-            format!("- {}\n", self.task)
-        } else if self.time.is_some() {
-            format!("- {} ({:.1}h)\n", self.task, self.time.unwrap_or(0.0))
-        } else {
-            format!("- {}\n", self.task)
-        }
     }
 }
