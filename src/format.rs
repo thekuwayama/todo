@@ -8,6 +8,8 @@ use nom::number::complete::float;
 use nom::sequence::{delimited, terminated};
 use nom::IResult;
 
+const PARSE_ERROR: &str = "failed to parse";
+
 pub(crate) struct Todo {
     pub done: bool,
     pub task: String,
@@ -28,11 +30,11 @@ fn time(s: &str) -> IResult<&str, Option<f32>> {
 
 fn todo(s: &str) -> IResult<&str, Todo> {
     let (s, done) = done(s)?;
-    let (s, (task, time)) = many_till(anychar, terminated(time, opt(char('\n'))))(s)?;
+    let (s, (task, time)) = many_till(anychar, terminated(time, char('\n')))(s)?;
     let mut task = task;
-    if task.pop() != Some(' ') || task.remove(0) != ' ' {
+    if task[0] != ' ' || task.remove(0) != ' ' || task.pop() != Some(' ') {
         return Err(nom::Err::Error(nom::error::Error::new(
-            "failed to parse",
+            PARSE_ERROR,
             nom::error::ErrorKind::Char,
         )));
     }
@@ -55,22 +57,9 @@ impl Todo {
     pub(crate) fn deserialize(
         s: &str,
     ) -> Result<Todo, Box<dyn error::Error + Send + Sync + 'static>> {
-        let (s, todo) = match todo(s) {
-            Ok((s, todo)) => (s, todo),
-            _ => {
-                return Err(Box::new(Error::new(
-                    ErrorKind::InvalidInput,
-                    "failed to parse",
-                )));
-            }
-        };
-        if !s.is_empty() {
-            return Err(Box::new(Error::new(
-                ErrorKind::InvalidInput,
-                "failed to parse",
-            )));
+        match todo(s) {
+            Ok((s, todo)) if s.is_empty() => Ok(todo),
+            _ => Err(Box::new(Error::new(ErrorKind::InvalidInput, PARSE_ERROR))),
         }
-
-        Ok(todo)
     }
 }
