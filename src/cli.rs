@@ -4,7 +4,7 @@ use std::str::FromStr;
 use clap::{arg, crate_description, crate_name, crate_version, ArgEnum, Command, PossibleValue};
 
 #[derive(ArgEnum, Clone, Copy)]
-pub enum Language {
+pub(crate) enum Language {
     Ja,
     En,
     Zh,
@@ -39,21 +39,21 @@ impl Language {
     }
 }
 
-pub const ADD: &str = "add";
-pub const CLEAR: &str = "clear";
-pub const CONTINUE: &str = "continue";
-pub const DELETE: &str = "delete";
-pub const DONE: &str = "done";
-pub const EDIT: &str = "edit";
-pub const LIST: &str = "list";
-pub const RECORD: &str = "record";
-pub const REPORT: &str = "report";
-pub const SWAP: &str = "swap";
-pub const UNCONTINUE: &str = "uncontinue";
-pub const UNDONE: &str = "undone";
-pub const UNRECORD: &str = "unrecord";
+pub(crate) const ADD: &str = "add";
+pub(crate) const CLEAR: &str = "clear";
+pub(crate) const CONTINUE: &str = "continue";
+pub(crate) const DELETE: &str = "delete";
+pub(crate) const DONE: &str = "done";
+pub(crate) const EDIT: &str = "edit";
+pub(crate) const LIST: &str = "list";
+pub(crate) const RECORD: &str = "record";
+pub(crate) const REPORT: &str = "report";
+pub(crate) const SWAP: &str = "swap";
+pub(crate) const UNCONTINUE: &str = "uncontinue";
+pub(crate) const UNDONE: &str = "undone";
+pub(crate) const UNRECORD: &str = "unrecord";
 
-pub fn build() -> Command<'static> {
+pub(crate) fn build() -> Command<'static> {
     Command::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
