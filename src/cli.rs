@@ -39,59 +39,73 @@ impl Language {
     }
 }
 
+pub const ADD: &str = "add";
+pub const CLEAR: &str = "clear";
+pub const CONTINUE: &str = "continue";
+pub const DELETE: &str = "delete";
+pub const DONE: &str = "done";
+pub const EDIT: &str = "edit";
+pub const LIST: &str = "list";
+pub const RECORD: &str = "record";
+pub const REPORT: &str = "report";
+pub const SWAP: &str = "swap";
+pub const UNCONTINUE: &str = "uncontinue";
+pub const UNDONE: &str = "undone";
+pub const UNRECORD: &str = "unrecord";
+
 pub fn build() -> Command<'static> {
     Command::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
         .subcommand_required(true)
         .arg_required_else_help(true)
-        .subcommand(Command::new("list").about("show todo list"))
-        .subcommand(Command::new("clear").about("clear todo list"))
+        .subcommand(Command::new(LIST).about("show todo list"))
+        .subcommand(Command::new(CLEAR).about("clear todo list"))
         .subcommand(
-            Command::new("add")
+            Command::new(ADD)
                 .about("add the task")
                 .arg(arg!(<TASK>).required(true)),
         )
         .subcommand(
-            Command::new("delete")
+            Command::new(DELETE)
                 .about("delete the task")
                 .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(
-            Command::new("edit")
+            Command::new(EDIT)
                 .about("edit the task description")
                 .arg(arg!(<INDEX>).required(true))
                 .arg(arg!(<TASK>).required(true)),
         )
         .subcommand(
-            Command::new("done")
+            Command::new(DONE)
                 .about("done the task")
                 .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(
-            Command::new("undone")
+            Command::new(UNDONE)
                 .about("undone the task")
                 .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(
-            Command::new("record")
+            Command::new(RECORD)
                 .about("record elapsed time")
                 .arg(arg!(<INDEX>).required(true))
                 .arg(arg!(<TIME>).required(true)),
         )
         .subcommand(
-            Command::new("unrecord")
+            Command::new(UNRECORD)
                 .about("unrecord elapsed time")
                 .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(
-            Command::new("swap")
+            Command::new(SWAP)
                 .about("swap two tasks")
                 .arg(arg!(<INDEX1>).required(true))
                 .arg(arg!(<INDEX2>).required(true)),
         )
         .subcommand(
-            Command::new("report")
+            Command::new(REPORT)
                 .about("report today's achievements")
                 .arg(arg!(<COMMENT>).required(false))
                 .arg(arg!(<TITLE>).required(false))
@@ -105,6 +119,6 @@ pub fn build() -> Command<'static> {
                         .required(false),
                 ),
         )
-        .subcommand(Command::new("continue").about("continue todo list"))
-        .subcommand(Command::new("uncontinue").about("uncontinue todo list"))
+        .subcommand(Command::new(CONTINUE).about("continue todo list"))
+        .subcommand(Command::new(UNCONTINUE).about("uncontinue todo list"))
 }

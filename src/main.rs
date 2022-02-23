@@ -44,17 +44,17 @@ fn main() {
         .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
     let mut reader = BufReader::new(r);
     match cli::build().get_matches().subcommand().unwrap() {
-        ("list", _) => {
+        (cli::LIST, _) => {
             let result = list::list(&mut reader).unwrap_or_else(|e| {
                 eprintln!("failed to show todo list: {}", e);
                 process::exit(1);
             });
             println!("{}", result);
         }
-        ("clear", _) => {
+        (cli::CLEAR, _) => {
             let _ = remove_file(&fp);
         }
-        ("add", s) => {
+        (cli::ADD, s) => {
             let result = add::add(s.value_of("TASK").unwrap());
             let mut writer = OpenOptions::new()
                 .create(true)
@@ -66,7 +66,7 @@ fn main() {
                 process::exit(1);
             });
         }
-        ("delete", i) => {
+        (cli::DELETE, i) => {
             let result = delete::delete(
                 &mut reader,
                 i.value_of("INDEX")
@@ -96,7 +96,7 @@ fn main() {
                     process::exit(1);
                 });
         }
-        ("edit", it) => {
+        (cli::EDIT, it) => {
             let result = edit::edit(
                 &mut reader,
                 it.value_of("INDEX")
@@ -127,7 +127,7 @@ fn main() {
                     process::exit(1);
                 });
         }
-        ("done", i) => {
+        (cli::DONE, i) => {
             let result = done::done(
                 &mut reader,
                 i.value_of("INDEX")
@@ -151,7 +151,7 @@ fn main() {
                 process::exit(1);
             });
         }
-        ("undone", i) => {
+        (cli::UNDONE, i) => {
             let result = undone::undone(
                 &mut reader,
                 i.value_of("INDEX")
@@ -175,7 +175,7 @@ fn main() {
                 process::exit(1);
             });
         }
-        ("record", it) => {
+        (cli::RECORD, it) => {
             let result = record::record(
                 &mut reader,
                 it.value_of("INDEX")
@@ -206,7 +206,7 @@ fn main() {
                 process::exit(1);
             });
         }
-        ("unrecord", i) => {
+        (cli::UNRECORD, i) => {
             let result = unrecord::unrecord(
                 &mut reader,
                 i.value_of("INDEX")
@@ -236,7 +236,7 @@ fn main() {
                     process::exit(1);
                 });
         }
-        ("swap", ii) => {
+        (cli::SWAP, ii) => {
             let result = swap::swap(
                 &mut reader,
                 ii.value_of("INDEX1")
@@ -267,7 +267,7 @@ fn main() {
                 process::exit(1);
             });
         }
-        ("report", cdl) => {
+        (cli::REPORT, cdl) => {
             let date = Local::today().format("%Y/%m/%d").to_string();
             let lang = Language::from_str(cdl.value_of("LANG").unwrap_or("ja")).unwrap();
             let result = report::report(
@@ -282,7 +282,7 @@ fn main() {
             });
             println!("{}", result);
         }
-        ("continue", _) => {
+        (cli::CONTINUE, _) => {
             let result = r#continue::r#continue(&mut reader).unwrap_or_else(|e| {
                 eprintln!("failed to continue todo list: {}", e);
                 process::exit(1);
@@ -307,7 +307,7 @@ fn main() {
                     process::exit(1);
                 });
         }
-        ("uncontinue", _) => {
+        (cli::UNCONTINUE, _) => {
             if Path::new(bp.as_str()).exists() {
                 rename(bp, &fp).unwrap_or_else(|e| {
                     eprintln!("failed to rename the file {}", e);
