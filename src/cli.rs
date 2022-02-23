@@ -1,9 +1,7 @@
 use std::fmt::Display;
 use std::str::FromStr;
 
-use clap::{
-    arg, crate_description, crate_name, crate_version, App, AppSettings, ArgEnum, PossibleValue,
-};
+use clap::{arg, crate_description, crate_name, crate_version, ArgEnum, Command, PossibleValue};
 
 #[derive(ArgEnum, Clone, Copy)]
 pub enum Language {
@@ -41,58 +39,59 @@ impl Language {
     }
 }
 
-pub fn build() -> App<'static> {
-    App::new(crate_name!())
+pub fn build() -> Command<'static> {
+    Command::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
-        .setting(AppSettings::SubcommandRequiredElseHelp)
-        .subcommand(App::new("list").about("show todo list"))
-        .subcommand(App::new("clear").about("clear todo list"))
+        .subcommand_required(true)
+        .arg_required_else_help(true)
+        .subcommand(Command::new("list").about("show todo list"))
+        .subcommand(Command::new("clear").about("clear todo list"))
         .subcommand(
-            App::new("add")
+            Command::new("add")
                 .about("add the task")
                 .arg(arg!(<TASK>).required(true)),
         )
         .subcommand(
-            App::new("delete")
+            Command::new("delete")
                 .about("delete the task")
                 .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(
-            App::new("edit")
+            Command::new("edit")
                 .about("edit the task description")
                 .arg(arg!(<INDEX>).required(true))
                 .arg(arg!(<TASK>).required(true)),
         )
         .subcommand(
-            App::new("done")
+            Command::new("done")
                 .about("done the task")
                 .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(
-            App::new("undone")
+            Command::new("undone")
                 .about("undone the task")
                 .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(
-            App::new("record")
+            Command::new("record")
                 .about("record elapsed time")
                 .arg(arg!(<INDEX>).required(true))
                 .arg(arg!(<TIME>).required(true)),
         )
         .subcommand(
-            App::new("unrecord")
+            Command::new("unrecord")
                 .about("unrecord elapsed time")
                 .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(
-            App::new("swap")
+            Command::new("swap")
                 .about("swap two tasks")
                 .arg(arg!(<INDEX1>).required(true))
                 .arg(arg!(<INDEX2>).required(true)),
         )
         .subcommand(
-            App::new("report")
+            Command::new("report")
                 .about("report today's achievements")
                 .arg(arg!(<COMMENT>).required(false))
                 .arg(arg!(<TITLE>).required(false))
@@ -106,6 +105,6 @@ pub fn build() -> App<'static> {
                         .required(false),
                 ),
         )
-        .subcommand(App::new("continue").about("continue todo list"))
-        .subcommand(App::new("uncontinue").about("uncontinue todo list"))
+        .subcommand(Command::new("continue").about("continue todo list"))
+        .subcommand(Command::new("uncontinue").about("uncontinue todo list"))
 }
