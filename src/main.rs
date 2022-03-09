@@ -20,7 +20,7 @@ use std::path::Path;
 use std::process;
 use std::str::FromStr;
 
-use chrono::offset::Local;
+use time::{format_description, OffsetDateTime};
 
 use crate::cli::Language;
 
@@ -268,7 +268,19 @@ fn main() {
             });
         }
         (cli::REPORT, cdl) => {
-            let date = Local::today().format("%Y/%m/%d").to_string();
+            let date_format =
+                format_description::parse("[year]/[month padding:zero]/[day padding:zero]")
+                    .unwrap();
+            let date = OffsetDateTime::now_local()
+                .unwrap_or_else(|e| {
+                    eprintln!("failed to get datetime: {}", e);
+                    process::exit(1);
+                })
+                .format(&date_format)
+                .unwrap_or_else(|e| {
+                    eprintln!("failed to get datetime: {}", e);
+                    process::exit(1);
+                });
             let lang = Language::from_str(cdl.value_of("LANG").unwrap_or("ja")).unwrap();
             let result = report::report(
                 &mut reader,
