@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: docker://rust:1.57.0
+      image: rust:1.63.0
     steps:
     - uses: actions/checkout@v3
     - name: Lint
