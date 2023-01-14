@@ -19,31 +19,31 @@ $ cargo install --git https://github.com/thekuwayama/todo.git --branch main
 ## Usage
 
 ```sh-session
-todo 0.1.0
+$ todo help
 simple command-line todo list
 
-USAGE:
-    todo <SUBCOMMAND>
+Usage: todo <COMMAND>
 
-OPTIONS:
-    -h, --help       Print help information
-    -V, --version    Print version information
+Commands:
+  list        show todo list
+  clear       clear todo list
+  add         add the task
+  delete      delete the task
+  edit        edit the task description
+  done        done the task
+  undone      undone the task
+  record      record elapsed time
+  unrecord    unrecord elapsed time
+  swap        swap two tasks
+  report      report today's achievements
+  continue    continue todo list
+  uncontinue  uncontinue todo list
+  help        Print this message or the help of the given subcommand(s)
 
-SUBCOMMANDS:
-    add           add the task
-    clear         clear todo list
-    continue      continue todo list
-    delete        delete the task
-    done          done the task
-    edit          edit the task description
-    help          Print this message or the help of the given subcommand(s)
-    list          show todo list
-    record        record elapsed time
-    report        report today's achievements
-    swap          swap two tasks
-    uncontinue    uncontinue todo list
-    undone        undone the task
-    unrecord      unrecord elapsed time
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+
 ```
 
 List todo
