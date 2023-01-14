@@ -18,7 +18,6 @@ use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::Path;
 use std::process;
-use std::str::FromStr;
 
 use time::{format_description, OffsetDateTime};
 
@@ -55,7 +54,7 @@ fn main() {
             let _ = remove_file(&fp);
         }
         (cli::ADD, s) => {
-            let result = add::add(s.value_of("TASK").unwrap());
+            let result = add::add(s.get_one::<String>("TASK").unwrap());
             let mut writer = OpenOptions::new()
                 .create(true)
                 .append(true)
@@ -69,7 +68,7 @@ fn main() {
         (cli::DELETE, i) => {
             let result = delete::delete(
                 &mut reader,
-                i.value_of("INDEX")
+                i.get_one::<String>("INDEX")
                     .unwrap()
                     .parse::<u32>()
                     .unwrap_or_else(|_| {
@@ -99,14 +98,14 @@ fn main() {
         (cli::EDIT, it) => {
             let result = edit::edit(
                 &mut reader,
-                it.value_of("INDEX")
+                it.get_one::<String>("INDEX")
                     .unwrap()
                     .parse::<u32>()
                     .unwrap_or_else(|_| {
                         eprintln!("failed, <INDEX> should be integer");
                         process::exit(1);
                     }),
-                it.value_of("TASK").unwrap(),
+                it.get_one::<String>("TASK").unwrap(),
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to edit task description: {}", e);
@@ -130,7 +129,7 @@ fn main() {
         (cli::DONE, i) => {
             let result = done::done(
                 &mut reader,
-                i.value_of("INDEX")
+                i.get_one::<String>("INDEX")
                     .unwrap()
                     .parse::<u32>()
                     .unwrap_or_else(|_| {
@@ -154,7 +153,7 @@ fn main() {
         (cli::UNDONE, i) => {
             let result = undone::undone(
                 &mut reader,
-                i.value_of("INDEX")
+                i.get_one::<String>("INDEX")
                     .unwrap()
                     .parse::<u32>()
                     .unwrap_or_else(|_| {
@@ -178,14 +177,14 @@ fn main() {
         (cli::RECORD, it) => {
             let result = record::record(
                 &mut reader,
-                it.value_of("INDEX")
+                it.get_one::<String>("INDEX")
                     .unwrap()
                     .parse::<u32>()
                     .unwrap_or_else(|_| {
                         eprintln!("failed, <INDEX> should be integer");
                         process::exit(1);
                     }),
-                it.value_of("TIME")
+                it.get_one::<String>("TIME")
                     .unwrap()
                     .parse::<f32>()
                     .unwrap_or_else(|_| {
@@ -209,7 +208,7 @@ fn main() {
         (cli::UNRECORD, i) => {
             let result = unrecord::unrecord(
                 &mut reader,
-                i.value_of("INDEX")
+                i.get_one::<String>("INDEX")
                     .unwrap()
                     .parse::<u32>()
                     .unwrap_or_else(|_| {
@@ -239,14 +238,14 @@ fn main() {
         (cli::SWAP, ii) => {
             let result = swap::swap(
                 &mut reader,
-                ii.value_of("INDEX1")
+                ii.get_one::<String>("INDEX1")
                     .unwrap()
                     .parse::<u32>()
                     .unwrap_or_else(|_| {
                         eprintln!("failed, <INDEX1> should be integer");
                         process::exit(1);
                     }),
-                ii.value_of("INDEX2")
+                ii.get_one::<String>("INDEX2")
                     .unwrap()
                     .parse::<u32>()
                     .unwrap_or_else(|_| {
@@ -281,12 +280,12 @@ fn main() {
                     eprintln!("failed to get datetime: {}", e);
                     process::exit(1);
                 });
-            let lang = Language::from_str(cdl.value_of("LANG").unwrap_or("ja")).unwrap();
+            let lang = cdl.get_one::<Language>("LANG").unwrap_or(&Language::Ja);
             let result = report::report(
                 &mut reader,
-                cdl.value_of("COMMENT").unwrap_or(""),
-                cdl.value_of("TITLE").unwrap_or(&date),
-                &lang,
+                cdl.get_one::<String>("COMMENT").unwrap_or(&"".to_owned()),
+                cdl.get_one::<String>("TITLE").unwrap_or(&date),
+                lang,
             )
             .unwrap_or_else(|e| {
                 eprintln!("failed to report today's achievements: {}", e);

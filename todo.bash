@@ -8,51 +8,93 @@ _todo() {
 
     for i in ${COMP_WORDS[@]}
     do
-        case "${i}" in
-            "$1")
+        case "${cmd},${i}" in
+            ",$1")
                 cmd="todo"
                 ;;
-            add)
-                cmd+="__add"
+            todo,add)
+                cmd="todo__add"
                 ;;
-            clear)
-                cmd+="__clear"
+            todo,clear)
+                cmd="todo__clear"
                 ;;
-            continue)
-                cmd+="__continue"
+            todo,continue)
+                cmd="todo__continue"
                 ;;
-            delete)
-                cmd+="__delete"
+            todo,delete)
+                cmd="todo__delete"
                 ;;
-            done)
-                cmd+="__done"
+            todo,done)
+                cmd="todo__done"
                 ;;
-            edit)
-                cmd+="__edit"
+            todo,edit)
+                cmd="todo__edit"
                 ;;
-            help)
-                cmd+="__help"
+            todo,help)
+                cmd="todo__help"
                 ;;
-            list)
-                cmd+="__list"
+            todo,list)
+                cmd="todo__list"
                 ;;
-            record)
-                cmd+="__record"
+            todo,record)
+                cmd="todo__record"
                 ;;
-            report)
-                cmd+="__report"
+            todo,report)
+                cmd="todo__report"
                 ;;
-            swap)
-                cmd+="__swap"
+            todo,swap)
+                cmd="todo__swap"
                 ;;
-            uncontinue)
-                cmd+="__uncontinue"
+            todo,uncontinue)
+                cmd="todo__uncontinue"
                 ;;
-            undone)
-                cmd+="__undone"
+            todo,undone)
+                cmd="todo__undone"
                 ;;
-            unrecord)
-                cmd+="__unrecord"
+            todo,unrecord)
+                cmd="todo__unrecord"
+                ;;
+            todo__help,add)
+                cmd="todo__help__add"
+                ;;
+            todo__help,clear)
+                cmd="todo__help__clear"
+                ;;
+            todo__help,continue)
+                cmd="todo__help__continue"
+                ;;
+            todo__help,delete)
+                cmd="todo__help__delete"
+                ;;
+            todo__help,done)
+                cmd="todo__help__done"
+                ;;
+            todo__help,edit)
+                cmd="todo__help__edit"
+                ;;
+            todo__help,help)
+                cmd="todo__help__help"
+                ;;
+            todo__help,list)
+                cmd="todo__help__list"
+                ;;
+            todo__help,record)
+                cmd="todo__help__record"
+                ;;
+            todo__help,report)
+                cmd="todo__help__report"
+                ;;
+            todo__help,swap)
+                cmd="todo__help__swap"
+                ;;
+            todo__help,uncontinue)
+                cmd="todo__help__uncontinue"
+                ;;
+            todo__help,undone)
+                cmd="todo__help__undone"
+                ;;
+            todo__help,unrecord)
+                cmd="todo__help__unrecord"
                 ;;
             *)
                 ;;
@@ -159,8 +201,204 @@ _todo() {
             return 0
             ;;
         todo__help)
-            opts="<SUBCOMMAND>..."
+            opts="list clear add delete edit done undone record unrecord swap report continue uncontinue help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__add)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__clear)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__continue)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__delete)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__done)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__edit)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__help)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__list)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__record)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__report)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__swap)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__uncontinue)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__undone)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__help__unrecord)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
@@ -201,7 +439,7 @@ _todo() {
             return 0
             ;;
         todo__report)
-            opts="-l -h --lang --help <COMMENT> <TITLE>"
+            opts="-l -h --lang --help [COMMENT] [TITLE]"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0

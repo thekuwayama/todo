@@ -1,25 +1,12 @@
 use std::fmt::Display;
-use std::str::FromStr;
 
-use clap::{arg, crate_description, crate_name, crate_version, ArgEnum, Command, PossibleValue};
+use clap::{arg, crate_description, crate_name, crate_version, value_parser, Command, ValueEnum};
 
-#[derive(ArgEnum, Clone, Copy)]
+#[derive(ValueEnum, Clone, Copy)]
 pub(crate) enum Language {
     Ja,
     En,
     Zh,
-}
-
-impl FromStr for Language {
-    type Err = String;
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        for variant in Self::value_variants() {
-            if variant.to_possible_value().unwrap().matches(s, false) {
-                return Ok(*variant);
-            }
-        }
-        Err(format!("Invalid variant: {}", s))
-    }
 }
 
 impl Display for Language {
@@ -28,14 +15,6 @@ impl Display for Language {
             .expect("no values are skipped")
             .get_name()
             .fmt(f)
-    }
-}
-
-impl Language {
-    pub fn possible_values() -> impl Iterator<Item = PossibleValue<'static>> {
-        Self::value_variants()
-            .iter()
-            .filter_map(ArgEnum::to_possible_value)
     }
 }
 
@@ -53,7 +32,7 @@ pub(crate) const UNCONTINUE: &str = "uncontinue";
 pub(crate) const UNDONE: &str = "undone";
 pub(crate) const UNRECORD: &str = "unrecord";
 
-pub(crate) fn build() -> Command<'static> {
+pub(crate) fn build() -> Command {
     Command::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
@@ -113,9 +92,7 @@ pub(crate) fn build() -> Command<'static> {
                     arg!(<LANG>)
                         .long("lang")
                         .short('l')
-                        .default_value("ja")
-                        .takes_value(true)
-                        .possible_values(Language::possible_values())
+                        .value_parser(value_parser!(Language))
                         .required(false),
                 ),
         )
