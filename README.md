@@ -125,6 +125,38 @@ $ todo report
 ### メモ、ぼやき
 
 ```
+```sh-session
+$ todo report --lang en
+## 2021/06/20 (0.7h)
+### Doing tasks
+
+### Done tasks
+- 朝起きる (0.1h)
+- 歯を磨く (0.1h)
+- シャワーを浴びる (0.5h)
+
+### Todo tasks in this week (On Friday, next week scheduled tasks)
+- お水を一杯飲む
+
+### Memo & Comments
+
+```
+```sh-session
+$ todo report --lang zh
+## 2021/06/20 (0.7h)
+### 进行中的任务
+
+### 已完成的任务
+- 朝起きる (0.1h)
+- 歯を磨く (0.1h)
+- シャワーを浴びる (0.5h)
+
+### 本周的任务（周五，下周安排的任务）
+- お水を一杯飲む
+
+### 备忘
+
+```
 
 Continue todo list
 
