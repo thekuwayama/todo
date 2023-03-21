@@ -2,6 +2,7 @@ use std::error;
 use std::io::BufRead;
 
 use crate::format::Todo;
+use crate::string::StringExt;
 
 const TODO: &str = "\u{2610}";
 const DONE: &str = "\u{2611}";
@@ -17,8 +18,9 @@ impl List {
                 self.0.task,
                 self.0.time.unwrap_or(0.0)
             )
+            .cyan()
         } else if self.0.done {
-            format!("{} {:03}: {}\n", DONE, index, self.0.task)
+            format!("{} {:03}: {}\n", DONE, index, self.0.task).cyan()
         } else if !self.0.done && self.0.time.is_some() {
             format!(
                 "{} {:03}: {} ({:.1})\n",
@@ -30,6 +32,7 @@ impl List {
         } else {
             format!("{} {:03}: {}\n", TODO, index, self.0.task)
         }
+        .bold()
     }
 }
 
@@ -67,10 +70,10 @@ mod tests {
         );
         assert_eq!(
             list(&mut reader).unwrap(),
-            "\u{2611} 000: first\n\
-             \u{2611} 001: second (2.0)\n\
-             \u{2610} 002: third\n\
-             \u{2610} 003: fourth (4.0)\n"
+            "\u{1b}[1m\u{1b}[36m\u{2611} 000: first\n\u{1b}[0m\u{1b}[0m\
+             \u{1b}[1m\u{1b}[36m\u{2611} 001: second (2.0)\n\u{1b}[0m\u{1b}[0m\
+             \u{1b}[1m\u{2610} 002: third\n\u{1b}[0m\
+             \u{1b}[1m\u{2610} 003: fourth (4.0)\n\u{1b}[0m"
         );
     }
 }

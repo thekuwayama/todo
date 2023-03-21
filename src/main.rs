@@ -8,6 +8,7 @@ mod format;
 mod list;
 mod record;
 mod report;
+mod string;
 mod swap;
 mod undone;
 mod unrecord;
