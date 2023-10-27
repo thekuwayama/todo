@@ -12,23 +12,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions-rs/toolchain@v1
+    - uses: actions/checkout@v4
+
+    - uses: dtolnay/rust-toolchain@master
       with:
         toolchain: 1.73.0
-        override: true
         components: clippy
+
     - name: cargo build
-      uses: actions-rs/cargo@v1
-      with:
-        command: build
-        args: --verbose
+      run: cargo build --verbose
+
     - name: cargo clippy
-      uses: actions-rs/cargo@v1
-      with:
-        command: clippy
-        args: --all-targets
+      run: cargo clippy --all-targets
+
     - name: cargo test
-      uses: actions-rs/cargo@v1
-      with:
-        command: test
+      run: cargo test
