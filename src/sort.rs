@@ -1,6 +1,7 @@
-use crate::format::Todo;
 use std::error;
 use std::io::BufRead;
+
+use crate::format::Todo;
 
 pub(crate) fn sort<R: BufRead>(
     reader: &mut R,
