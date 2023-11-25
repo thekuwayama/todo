@@ -34,6 +34,7 @@ Commands:
   undone      undone the task
   record      record elapsed time
   unrecord    unrecord elapsed time
+  sort        sort tasks
   swap        swap two tasks
   report      report today's achievements
   continue    continue todo list

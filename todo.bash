@@ -42,6 +42,9 @@ _todo() {
             todo,report)
                 cmd="todo__report"
                 ;;
+            todo,sort)
+                cmd="todo__sort"
+                ;;
             todo,swap)
                 cmd="todo__swap"
                 ;;
@@ -84,6 +87,9 @@ _todo() {
             todo__help,report)
                 cmd="todo__help__report"
                 ;;
+            todo__help,sort)
+                cmd="todo__help__sort"
+                ;;
             todo__help,swap)
                 cmd="todo__help__swap"
                 ;;
@@ -103,7 +109,7 @@ _todo() {
 
     case "${cmd}" in
         todo)
-            opts="-h -V --help --version list clear add delete edit done undone record unrecord swap report continue uncontinue help"
+            opts="-h -V --help --version list clear add delete edit done undone record unrecord sort swap report continue uncontinue help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -201,7 +207,7 @@ _todo() {
             return 0
             ;;
         todo__help)
-            opts="list clear add delete edit done undone record unrecord swap report continue uncontinue help"
+            opts="list clear add delete edit done undone record unrecord sort swap report continue uncontinue help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -354,6 +360,20 @@ _todo() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
+        todo__help__sort)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
         todo__help__swap)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
@@ -453,6 +473,20 @@ _todo() {
                     COMPREPLY=($(compgen -W "ja en zh" -- "${cur}"))
                     return 0
                     ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        todo__sort)
+            opts="-h --help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
                 *)
                     COMPREPLY=()
                     ;;
