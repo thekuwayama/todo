@@ -8,6 +8,7 @@ mod format;
 mod list;
 mod record;
 mod report;
+mod sort;
 mod string;
 mod swap;
 mod undone;
@@ -235,6 +236,20 @@ fn main() {
                     eprintln!("failed to unrecord time: {}", e);
                     process::exit(1);
                 });
+        }
+        (cli::SORT, _) => {
+            let result = sort::sort(&mut reader).unwrap_or_else(|e| {
+                eprintln!("failed to swap tasks: {}", e);
+                process::exit(1);
+            });
+            let mut writer = OpenOptions::new()
+                .write(true)
+                .open(&fp)
+                .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
+            writer.write_all(result.as_bytes()).unwrap_or_else(|e| {
+                eprintln!("failed to sort tasks: {}", e);
+                process::exit(1);
+            });
         }
         (cli::SWAP, ii) => {
             let result = swap::swap(
