@@ -27,6 +27,7 @@ pub(crate) const EDIT: &str = "edit";
 pub(crate) const LIST: &str = "list";
 pub(crate) const RECORD: &str = "record";
 pub(crate) const REPORT: &str = "report";
+pub(crate) const SHOW: &str = "show";
 pub(crate) const SORT: &str = "sort";
 pub(crate) const SWAP: &str = "swap";
 pub(crate) const UNCONTINUE: &str = "uncontinue";
@@ -76,6 +77,11 @@ pub(crate) fn build() -> Command {
         .subcommand(
             Command::new(UNRECORD)
                 .about("unrecord elapsed time")
+                .arg(arg!(<INDEX>).required(true)),
+        )
+        .subcommand(
+            Command::new(SHOW)
+                .about("show the task")
                 .arg(arg!(<INDEX>).required(true)),
         )
         .subcommand(Command::new(SORT).about("sort tasks"))

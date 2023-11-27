@@ -8,6 +8,7 @@ mod format;
 mod list;
 mod record;
 mod report;
+mod show;
 mod sort;
 mod string;
 mod swap;
@@ -236,6 +237,23 @@ fn main() {
                     eprintln!("failed to unrecord time: {}", e);
                     process::exit(1);
                 });
+        }
+        (cli::SHOW, i) => {
+            let result = show::show(
+                &mut reader,
+                i.get_one::<String>("INDEX")
+                    .unwrap()
+                    .parse::<u32>()
+                    .unwrap_or_else(|_| {
+                        eprintln!("failed, <INDEX> should be integer");
+                        process::exit(1);
+                    }),
+            )
+            .unwrap_or_else(|e| {
+                eprintln!("failed to show the task: {}", e);
+                process::exit(1);
+            });
+            println!("{}", result);
         }
         (cli::SORT, _) => {
             let result = sort::sort(&mut reader).unwrap_or_else(|e| {
