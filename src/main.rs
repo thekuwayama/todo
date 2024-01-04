@@ -253,7 +253,7 @@ fn main() {
                 eprintln!("failed to show the task: {}", e);
                 process::exit(1);
             });
-            println!("{}", result);
+            print!("{}", result);
         }
         (cli::SORT, _) => {
             let result = sort::sort(&mut reader).unwrap_or_else(|e| {
