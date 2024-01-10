@@ -18,8 +18,25 @@ impl Display for Language {
     }
 }
 
+#[derive(ValueEnum, Clone, Copy)]
+pub(crate) enum Shell {
+    Bash,
+    Zsh,
+    Fish,
+}
+
+impl Display for Shell {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.to_possible_value()
+            .expect("no values are skipped")
+            .get_name()
+            .fmt(f)
+    }
+}
+
 pub(crate) const ADD: &str = "add";
 pub(crate) const CLEAR: &str = "clear";
+pub(crate) const COMPLETION: &str = "completion";
 pub(crate) const CONTINUE: &str = "continue";
 pub(crate) const DELETE: &str = "delete";
 pub(crate) const DONE: &str = "done";
@@ -106,4 +123,15 @@ pub(crate) fn build() -> Command {
         )
         .subcommand(Command::new(CONTINUE).about("continue todo list"))
         .subcommand(Command::new(UNCONTINUE).about("uncontinue todo list"))
+        .subcommand(
+            Command::new(COMPLETION)
+                .about("print shell completion")
+                .arg(
+                    arg!(<SHELL>)
+                        .long("shell")
+                        .short('s')
+                        .value_parser(value_parser!(Shell))
+                        .required(false),
+                ),
+        )
 }

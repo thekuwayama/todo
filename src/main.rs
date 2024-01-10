@@ -22,9 +22,10 @@ use std::io::BufReader;
 use std::path::Path;
 use std::process;
 
+use clap_complete::{generate, shells};
 use time::{format_description, OffsetDateTime};
 
-use crate::cli::Language;
+use crate::cli::{Language, Shell};
 
 const FILE_NAME: &str = ".todo";
 
@@ -359,6 +360,15 @@ fn main() {
                     process::exit(1);
                 });
             }
+        }
+        (cli::COMPLETION, s) => {
+            let mut app = cli::build();
+            let name = app.get_name().to_owned();
+            match s.get_one::<Shell>("SHELL").unwrap_or(&Shell::Bash) {
+                Shell::Bash => generate(shells::Bash, &mut app, name, &mut std::io::stdout()),
+                Shell::Zsh => generate(shells::Zsh, &mut app, name, &mut std::io::stdout()),
+                Shell::Fish => generate(shells::Fish, &mut app, name, &mut std::io::stdout()),
+            };
         }
         _ => unreachable!(),
     };
