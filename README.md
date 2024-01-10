@@ -176,7 +176,7 @@ $ todo list
 You can load the file to do the bash completion.
 
 ```sh-session
-$ echo "source <(todo completion --shell bash)" >> ~/.bashrc
+$ echo "eval \"\$(todo completion)\"" >> ~/.bash_profile
 ```
 
 
