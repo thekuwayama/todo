@@ -40,6 +40,7 @@ Commands:
   report      report today's achievements
   continue    continue todo list
   uncontinue  uncontinue todo list
+  completion  print shell completion
   help        Print this message or the help of the given subcommand(s)
 
 Options:
@@ -175,7 +176,7 @@ $ todo list
 You can load the file to do the bash completion.
 
 ```sh-session
-$ source todo.bash
+$ echo "source <(todo completion --shell bash)" >> ~/.bashrc
 ```
 
 
