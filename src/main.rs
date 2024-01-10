@@ -363,7 +363,7 @@ fn main() {
         }
         (cli::COMPLETION, s) => {
             let mut app = cli::build();
-            let name = app.get_name().to_owned();
+            let name = app.get_name().to_string();
             match s.get_one::<Shell>("SHELL").unwrap_or(&Shell::Bash) {
                 Shell::Bash => generate(shells::Bash, &mut app, name, &mut std::io::stdout()),
                 Shell::Zsh => generate(shells::Zsh, &mut app, name, &mut std::io::stdout()),
