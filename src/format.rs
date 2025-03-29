@@ -58,7 +58,7 @@ impl Todo {
         s: &str,
     ) -> Result<Todo, Box<dyn error::Error + Send + Sync + 'static>> {
         match todo(s) {
-            Ok((s, todo)) if s.is_empty() => Ok(todo),
+            Ok(("", todo)) => Ok(todo),
             _ => Err(Box::new(Error::new(ErrorKind::InvalidInput, PARSE_ERROR))),
         }
     }

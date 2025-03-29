@@ -41,6 +41,7 @@ fn main() {
     let bp = format!("{}.backup", fp);
     let r = OpenOptions::new()
         .create(true)
+        .truncate(false)
         .read(true)
         .write(true)
         .open(&fp)
@@ -61,6 +62,7 @@ fn main() {
             let result = add::add(s.get_one::<String>("TASK").unwrap());
             let mut writer = OpenOptions::new()
                 .create(true)
+                .truncate(false)
                 .append(true)
                 .open(&fp)
                 .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
@@ -93,7 +95,7 @@ fn main() {
                 process::exit(1);
             });
             writer
-                .set_len(result.as_bytes().len() as u64)
+                .set_len(result.len() as u64)
                 .unwrap_or_else(|e| {
                     eprintln!("failed to delete a task: {}", e);
                     process::exit(1);
@@ -124,7 +126,7 @@ fn main() {
                 process::exit(1);
             });
             writer
-                .set_len(result.as_bytes().len() as u64)
+                .set_len(result.len() as u64)
                 .unwrap_or_else(|e| {
                     eprintln!("failed to edit task description: {}", e);
                     process::exit(1);
@@ -233,7 +235,7 @@ fn main() {
                 process::exit(1);
             });
             writer
-                .set_len(result.as_bytes().len() as u64)
+                .set_len(result.len() as u64)
                 .unwrap_or_else(|e| {
                     eprintln!("failed to unrecord time: {}", e);
                     process::exit(1);
@@ -339,6 +341,7 @@ fn main() {
             });
             let mut writer = OpenOptions::new()
                 .create(true)
+                .truncate(false)
                 .write(true)
                 .open(&fp)
                 .unwrap_or_else(|_| panic!("failed to open the file {}", fp));
@@ -347,7 +350,7 @@ fn main() {
                 process::exit(1);
             });
             writer
-                .set_len(result.as_bytes().len() as u64)
+                .set_len(result.len() as u64)
                 .unwrap_or_else(|e| {
                     eprintln!("failed to continue todo list: {}", e);
                     process::exit(1);
