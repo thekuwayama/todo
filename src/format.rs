@@ -6,7 +6,7 @@ use nom::combinator::opt;
 use nom::multi::many_till;
 use nom::number::complete::float;
 use nom::sequence::{delimited, terminated};
-use nom::IResult;
+use nom::{IResult, Parser};
 
 const PARSE_ERROR: &str = "failed to parse";
 
@@ -17,20 +17,20 @@ pub(crate) struct Todo {
 }
 
 fn done(s: &str) -> IResult<&str, bool> {
-    let (s, done) = delimited(char('['), one_of("x "), char(']'))(s)?;
+    let (s, done) = delimited(char('['), one_of("x "), char(']')).parse(s)?;
 
     Ok((s, done == 'x'))
 }
 
 fn time(s: &str) -> IResult<&str, Option<f32>> {
-    let (s, time) = delimited(char('('), opt(float), char(')'))(s)?;
+    let (s, time) = delimited(char('('), opt(float), char(')')).parse(s)?;
 
     Ok((s, time))
 }
 
 fn todo(s: &str) -> IResult<&str, Todo> {
     let (s, done) = done(s)?;
-    let (s, (task, time)) = many_till(anychar, terminated(time, char('\n')))(s)?;
+    let (s, (task, time)) = many_till(anychar, terminated(time, char('\n'))).parse(s)?;
     let mut task = task;
     if task[0] != ' ' || task.remove(0) != ' ' || task.pop() != Some(' ') {
         return Err(nom::Err::Error(nom::error::Error::new(
