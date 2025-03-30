@@ -279,7 +279,6 @@ dependencies = [
  "clap",
  "clap_complete",
  "nom",
- "once_cell",
  "time",
 ]
 

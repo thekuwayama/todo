@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::error;
 use std::io::BufRead;
 
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 
 use crate::cli::Language;
 use crate::format::Todo;
@@ -15,7 +15,7 @@ enum ReportKey {
     Comment,
 }
 
-static JA: Lazy<HashMap<ReportKey, &str>> = Lazy::new(|| {
+static JA: LazyLock<HashMap<ReportKey, &str>> = LazyLock::new(|| {
     HashMap::from([
         (ReportKey::Doing, "進行中のタスク"),
         (ReportKey::Done, "完了済みのタスク"),
@@ -27,7 +27,7 @@ static JA: Lazy<HashMap<ReportKey, &str>> = Lazy::new(|| {
     ])
 });
 
-static EN: Lazy<HashMap<ReportKey, &str>> = Lazy::new(|| {
+static EN: LazyLock<HashMap<ReportKey, &str>> = LazyLock::new(|| {
     HashMap::from([
         (ReportKey::Doing, "Doing tasks"),
         (ReportKey::Done, "Done tasks"),
@@ -39,7 +39,7 @@ static EN: Lazy<HashMap<ReportKey, &str>> = Lazy::new(|| {
     ])
 });
 
-static ZH: Lazy<HashMap<ReportKey, &str>> = Lazy::new(|| {
+static ZH: LazyLock<HashMap<ReportKey, &str>> = LazyLock::new(|| {
     HashMap::from([
         (ReportKey::Doing, "进行中的任务"),
         (ReportKey::Done, "已完成的任务"),
