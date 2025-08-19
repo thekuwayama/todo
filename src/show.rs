@@ -36,10 +36,10 @@ mod tests {
     #[test]
     fn test_show() {
         let mut reader = BufReader::new(
-            "[x] first ()\n\
-             [x] second (2.0)\n\
-             [ ] third ()\n\
-             [ ] fourth (4.0)\n"
+            "- [x] first ()\n\
+             - [x] second (2.0)\n\
+             - [ ] third ()\n\
+             - [ ] fourth (4.0)\n"
                 .as_bytes(),
         );
         assert_eq!(show(&mut reader, 1).unwrap(), "second",);

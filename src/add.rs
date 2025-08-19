@@ -15,6 +15,6 @@ mod tests {
 
     #[test]
     fn test_add() {
-        assert_eq!(add("test"), "[ ] test ()\n".to_string());
+        assert_eq!(add("test"), "- [ ] test ()\n".to_string());
     }
 }

@@ -139,10 +139,10 @@ mod tests {
     use super::*;
     use std::io::BufReader;
 
-    static INPUT: &[u8] = "[x] first ()\n\
-         [x] second (2.0)\n\
-         [ ] third ()\n\
-         [ ] fourth (4.0)\n"
+    static INPUT: &[u8] = "- [x] first ()\n\
+         - [x] second (2.0)\n\
+         - [ ] third ()\n\
+         - [ ] fourth (4.0)\n"
         .as_bytes();
 
     #[test]

@@ -42,14 +42,14 @@ mod tests {
     #[test]
     fn test_done() {
         let mut reader = BufReader::new(
-            "[ ] first ()\n\
-             [ ] second ()\n"
+            "- [ ] first ()\n\
+             - [ ] second ()\n"
                 .as_bytes(),
         );
         assert_eq!(
             done(&mut reader, 0).unwrap(),
-            "[x] first ()\n\
-             [ ] second ()\n"
+            "- [x] first ()\n\
+             - [ ] second ()\n"
         );
     }
 }

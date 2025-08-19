@@ -32,18 +32,18 @@ mod tests {
     #[test]
     fn test_sort() {
         let mut reader = BufReader::new(
-            "[ ] first ()\n\
-             [x] second ()\n\
-             [ ] third ()\n\
-             [x] fourth ()\n"
+            "- [ ] first ()\n\
+             - [x] second ()\n\
+             - [ ] third ()\n\
+             - [x] fourth ()\n"
                 .as_bytes(),
         );
         assert_eq!(
             sort(&mut reader).unwrap(),
-            "[x] second ()\n\
-             [x] fourth ()\n\
-             [ ] first ()\n\
-             [ ] third ()\n"
+            "- [x] second ()\n\
+             - [x] fourth ()\n\
+             - [ ] first ()\n\
+             - [ ] third ()\n"
         );
     }
 }

@@ -5,7 +5,8 @@ use nom::character::complete::{anychar, char, one_of};
 use nom::combinator::opt;
 use nom::multi::many_till;
 use nom::number::complete::float;
-use nom::sequence::{delimited, terminated};
+use nom::sequence::{preceded, delimited, terminated};
+use nom::bytes::complete::tag;
 use nom::{IResult, Parser};
 
 const PARSE_ERROR: &str = "failed to parse";
@@ -17,7 +18,7 @@ pub(crate) struct Todo {
 }
 
 fn done(s: &str) -> IResult<&str, bool> {
-    let (s, done) = delimited(char('['), one_of("x "), char(']')).parse(s)?;
+    let (s, done) = preceded(tag("- "), delimited(char('['), one_of("x "), char(']'))).parse(s)?;
 
     Ok((s, done == 'x'))
 }
@@ -47,7 +48,7 @@ fn todo(s: &str) -> IResult<&str, Todo> {
 impl Todo {
     pub(crate) fn serialize(&self) -> String {
         format!(
-            "[{}] {} ({})\n",
+            "- [{}] {} ({})\n",
             if self.done { 'x' } else { ' ' },
             self.task,
             self.time.map_or("".to_string(), |f| format!("{:.1}", f)),

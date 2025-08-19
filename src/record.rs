@@ -43,14 +43,14 @@ mod tests {
     #[test]
     fn test_record() {
         let mut reader = BufReader::new(
-            "[x] first ()\n\
-             [x] second ()\n"
+            "- [x] first ()\n\
+             - [x] second ()\n"
                 .as_bytes(),
         );
         assert_eq!(
             record(&mut reader, 0, 0.5).unwrap(),
-            "[x] first (0.5)\n\
-             [x] second ()\n"
+            "- [x] first (0.5)\n\
+             - [x] second ()\n"
         );
     }
 }
