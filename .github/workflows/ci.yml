@@ -14,9 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-    - uses: dtolnay/rust-toolchain@master
+    - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9
       with:
-        toolchain: 1.85.1
+        toolchain: 1.93.1
         components: clippy
 
     - name: cargo build
